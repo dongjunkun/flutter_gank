@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gank_app/search_page.dart';
+import 'package:gank_app/all_page.dart';
 
 void main() => runApp(new MyApp());
 
@@ -71,7 +72,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         body: TabBarView(children: <Widget>[
-          new Center(child: Text('all')),
+          AllPage(),
           new Center(child: Text('girl')),
           new Center(child: Text('android')),
           new Center(child: Text('ios')),
@@ -83,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage> {
         ]),
         floatingActionButton: new FloatingActionButton(
           onPressed: () {
-            var snackBar = SnackBar(content: Text('come soon'));
+            var snackBar = SnackBar(content: Text('coming soon!!'));
             _globalKey.currentState.showSnackBar(snackBar);
           },
           tooltip: 'refresh',
