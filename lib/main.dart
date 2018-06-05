@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     MaterialPageRoute.debugEnableFadingRoutes = true;
     return new MaterialApp(
-      title: 'Gank',
+      title: '干货集中营',
       theme: new ThemeData(
         primarySwatch: Colors.brown,
       ),
@@ -28,17 +28,18 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+
   GlobalKey<ScaffoldState> _globalKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
     return new DefaultTabController(
       length: 9,
+
       child: new Scaffold(
         key: _globalKey,
         appBar: new AppBar(
-          title: new Text('gank'),
+          title: new Text('干货集中营'),
           leading: IconButton(
             onPressed: () {
               setState(() {
@@ -57,39 +58,33 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
           bottom: TabBar(
             isScrollable: true,
+
             indicatorSize: TabBarIndicatorSize.label,
             tabs: <Widget>[
-              Tab(text: 'all'),
-              Tab(text: 'girl'),
-              Tab(text: 'android'),
-              Tab(text: 'ios'),
-              Tab(text: 'video'),
-              Tab(text: 'javaScript'),
-              Tab(text: 'resource'),
-              Tab(text: 'app'),
-              Tab(text: 'recommend'),
+              Tab(text: '全部'),
+              Tab(text: '福利'),
+              Tab(text: 'Android'),
+              Tab(text: 'iOS'),
+              Tab(text: '休息视频'),
+              Tab(text: '前端'),
+              Tab(text: '拓展资源'),
+              Tab(text: 'App'),
+              Tab(text: '瞎推荐'),
             ],
           ),
         ),
         body: TabBarView(children: <Widget>[
-          AllPage(),
-          new Center(child: Text('girl')),
-          new Center(child: Text('android')),
-          new Center(child: Text('ios')),
-          new Center(child: Text('video')),
-          new Center(child: Text('javaScript')),
-          new Center(child: Text('resource')),
-          new Center(child: Text('app')),
-          new Center(child: Text('recommend')),
+          AllPage(type: 'all'),
+          AllPage(type: '福利'),
+          AllPage(type: 'Android'),
+          AllPage(type: 'iOS'),
+          AllPage(type: '休息视频'),
+          AllPage(type: '前端'),
+          AllPage(type: '拓展资源'),
+          AllPage(type: 'App'),
+          AllPage(type: '瞎推荐'),
         ]),
-        floatingActionButton: new FloatingActionButton(
-          onPressed: () {
-            var snackBar = SnackBar(content: Text('coming soon!!'));
-            _globalKey.currentState.showSnackBar(snackBar);
-          },
-          tooltip: 'refresh',
-          child: new Icon(Icons.refresh),
-        ),
+
         drawer: Container(
           color: Colors.white,
           height: double.infinity,
