@@ -89,6 +89,10 @@ class _MyHomePageState extends State<MyHomePage> {
           color: Colors.white,
           height: double.infinity,
           width: MediaQuery.of(context).size.width - 56,
+          child: FlutterLogo(
+            colors: Colors.brown,
+            style: FlutterLogoStyle.horizontal,
+          ),
         ),
       ),
     );
