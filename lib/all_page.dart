@@ -68,31 +68,39 @@ class _AllPageState extends State<AllPage> {
 
   Widget _buildTextItem(dynamic ganHuo) {
     TextDecoration.underline;
-    return new InkWell(
-      child: new ListTile(
-        title: Text(
-          ganHuo['desc'],
-          textAlign: TextAlign.justify,
-          style: TextStyle(decoration: TextDecoration.underline),
+    return new Card(
+      child: new InkWell(
+        onTap: (){
+          _globalKey.currentState.showSnackBar(SnackBar(content: Text(ganHuo['desc'])));
+        },
+        child: new ListTile(
+          title: Text(
+            ganHuo['desc'],
+            textAlign: TextAlign.justify,
+            style: TextStyle(decoration: TextDecoration.none),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildImageItem(dynamic ganHuo) {
-    return new InkWell(
-      onTap: () {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => new ImagePreViewWidget(url: ganHuo['url']),
-            ));
-      },
+    return new Card(
+
       child: new Hero(
         tag: ganHuo['url'],
 //          child: Image.network(ganHuo['url'])
-        child: CachedNetworkImage(
-          imageUrl: ganHuo['url'],
+        child: new InkWell(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => new ImagePreViewWidget(url: ganHuo['url']),
+                ));
+          },
+          child: CachedNetworkImage(
+            imageUrl: ganHuo['url'],
+          ),
         ),
       ),
     );
