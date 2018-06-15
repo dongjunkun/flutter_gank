@@ -1,3 +1,4 @@
+
 class GanHuos {
   final bool error;
   final List<GanHuo> results;

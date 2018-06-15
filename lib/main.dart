@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gank_app/all_page.dart';
+import 'package:gank_app/girl_page.dart';
 import 'package:gank_app/search_page.dart';
 
 void main() => runApp(new MyApp());
@@ -29,7 +30,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin{
+    with SingleTickerProviderStateMixin {
   GlobalKey<ScaffoldState> _globalKey = GlobalKey();
 
   TabController tabController;
@@ -83,7 +84,7 @@ class _MyHomePageState extends State<MyHomePage>
         ),
         body: TabBarView(controller: tabController, children: <Widget>[
           AllPage(type: 'all'),
-          AllPage(type: '福利'),
+          GirlPage(),
           AllPage(type: 'Android'),
           AllPage(type: 'iOS'),
           AllPage(type: '休息视频'),
@@ -111,7 +112,6 @@ class _MyHomePageState extends State<MyHomePage>
               .showSnackBar(SnackBar(content: Text('再按一次退出系统！')));
         } else {
           SystemNavigator.pop();
-
         }
       },
     );
