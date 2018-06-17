@@ -17,10 +17,42 @@ class _GirlPageState extends State<GirlPage> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey();
 
+  String _pageIdentifier;
+  String _dataIdentifier;
+
+  int _page;
+
+  ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
-    getData();
+    _pageIdentifier = '福利_pageIdentifier';
+    _dataIdentifier = '福利_dataIdentifier';
+    _page = PageStorage
+        .of(context)
+        .readState(context, identifier: _pageIdentifier) ??
+        1;
+    list.addAll(PageStorage.of(context).readState(
+        context, identifier: _dataIdentifier) ?? []);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 获取到 NestedScrollView 为子 ScrollView 添加的特殊 ScrollController
+    // 如果自己为 ScrollView 添加一个新的 ScrollController 会导致
+    // NestedScrollView 和 SliverAppBar 带来的自动隐藏 AppBar 失效
+    _scrollController = ScrollController();
+    _scrollController.addListener(_handleScroll);
+  }
+
+  void _handleScroll() {
+    print('_GirlPageState._handleScroll');
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      getData(false);
+    }
   }
 
   Future<Null> _handleRefresh() {
@@ -32,8 +64,16 @@ class _GirlPageState extends State<GirlPage> {
   }
 
   @override
+  void dispose() {
+    _scrollController.removeListener(_handleScroll);
+    super.dispose();
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     if (list.isEmpty) {
+      getData(true);
       return Center(
         child: CircularProgressIndicator(),
       );
@@ -43,6 +83,7 @@ class _GirlPageState extends State<GirlPage> {
         body: new RefreshIndicator(
           key: _refreshIndicatorKey,
           child: StaggeredGridView.countBuilder(
+            controller: _scrollController,
             padding: const EdgeInsets.all(1.0),
             crossAxisCount: 2,
             mainAxisSpacing: 1.0,
@@ -52,18 +93,8 @@ class _GirlPageState extends State<GirlPage> {
                 _buildImageItem(list.elementAt(index)),
             staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
           ),
-          onRefresh:_handleRefresh,
+          onRefresh: _handleRefresh,
         ),
-//        body: new ListView.builder(
-//          itemCount: list.length,
-//          itemBuilder: (BuildContext context, int index) {
-//            if (list.elementAt(index)['type'] == '福利') {
-//              return _buildImageItem(list.elementAt(index));
-//            } else {
-//              return _buildTextItem(list.elementAt(index));
-//            }
-//          },
-//        ),
         floatingActionButton: new FloatingActionButton(
           onPressed: () {
             _refreshIndicatorKey.currentState.show();
@@ -75,17 +106,29 @@ class _GirlPageState extends State<GirlPage> {
     }
   }
 
-  Future getData() async {
+  Future getData(bool isClean) async {
+    if (isClean) {
+      _page = 1;
+    }
     Dio dio = new Dio();
-    Response response = await dio.get("http://gank.io/api/data/福利/$pageSize/1");
+    Response response = await dio.get(
+        "http://gank.io/api/data/福利/$pageSize/$_page");
 
     Map<String, dynamic> map = response.data;
     List<dynamic> ganhuos = map['results'];
 
-    setState(() {
+
+    _page++;
+    if (isClean) {
       list.clear();
-      list.addAll(ganhuos);
-    });
+    } else {}
+
+    list.addAll(ganhuos);
+    PageStorage.of(context).writeState(
+        context, list, identifier: _dataIdentifier);
+    PageStorage.of(context).writeState(
+        context, _page, identifier: _pageIdentifier);
+    setState(() {});
   }
 
   Widget _buildImageItem(dynamic ganHuo) {
@@ -98,7 +141,7 @@ class _GirlPageState extends State<GirlPage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    new ImagePreViewWidget(url: ganHuo['url']),
+                new ImagePreViewWidget(url: ganHuo['url']),
               ));
         },
         child: CachedNetworkImage(

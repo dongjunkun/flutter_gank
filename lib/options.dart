@@ -1,2 +1,2 @@
 
-int pageSize = 50;
+int pageSize = 20;

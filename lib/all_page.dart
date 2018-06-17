@@ -16,15 +16,52 @@ class _AllPageState extends State<AllPage> {
   List<dynamic> list = List<dynamic>();
   GlobalKey<ScaffoldState> _globalKey = GlobalKey();
 
+  String _pageIdentifier;
+  String _dataIdentifier;
+
+  int _page;
+
+  ScrollController _scrollController;
+
   @override
   void initState() {
     super.initState();
-    getData(widget.type);
+    _pageIdentifier = '${widget.type}_pageIdentifier';
+    _dataIdentifier = '${widget.type}_dataIdentifier';
+
+    _page = PageStorage.of(context).readState(
+        context, identifier: _pageIdentifier);
+    list.addAll(PageStorage.of(context).readState(
+        context, identifier: _dataIdentifier) ?? []);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // 获取到 NestedScrollView 为子 ScrollView 添加的特殊 ScrollController
+    // 如果自己为 ScrollView 添加一个新的 ScrollController 会导致
+    // NestedScrollView 和 SliverAppBar 带来的自动隐藏 AppBar 失效
+    _scrollController = ScrollController();
+    _scrollController.addListener(_handleScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_handleScroll);
+    super.dispose();
+  }
+
+  void _handleScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      getData(false, widget.type);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     if (list.isEmpty) {
+      getData(true, widget.type);
       return Center(
         child: CircularProgressIndicator(),
       );
@@ -32,6 +69,7 @@ class _AllPageState extends State<AllPage> {
       return new Scaffold(
         key: _globalKey,
         body: new ListView.builder(
+          controller: _scrollController,
           itemCount: list.length,
           itemBuilder: (BuildContext context, int index) {
             if (list.elementAt(index)['type'] == '福利') {
@@ -43,7 +81,7 @@ class _AllPageState extends State<AllPage> {
         ),
         floatingActionButton: new FloatingActionButton(
           onPressed: () {
-            getData(widget.type);
+            getData(true, widget.type);
           },
           tooltip: 'refresh',
           child: new Icon(Icons.refresh),
@@ -52,17 +90,27 @@ class _AllPageState extends State<AllPage> {
     }
   }
 
-  getData(String type) async {
+  getData(bool isClean, String type) async {
+    if (isClean) {
+      _page = 1;
+    }
     Dio dio = new Dio();
     Response response =
-        await dio.get("http://gank.io/api/data/$type/$pageSize/1");
+    await dio.get("http://gank.io/api/data/$type/$pageSize/$_page");
 
     Map<String, dynamic> map = response.data;
     List<dynamic> ganhuos = map['results'];
 
-    setState(() {
+    _page++;
+    if (isClean) {
       list.clear();
-      list.addAll(ganhuos);
+    }
+    list.addAll(ganhuos);
+    PageStorage.of(context).writeState(context, list,identifier:_dataIdentifier );
+    PageStorage.of(context).writeState(context, _page,identifier: _pageIdentifier);
+
+    setState(() {
+
     });
   }
 
@@ -70,8 +118,9 @@ class _AllPageState extends State<AllPage> {
     TextDecoration.underline;
     return new Card(
       child: new InkWell(
-        onTap: (){
-          _globalKey.currentState.showSnackBar(SnackBar(content: Text(ganHuo['desc'])));
+        onTap: () {
+          _globalKey.currentState.showSnackBar(
+              SnackBar(content: Text(ganHuo['desc'])));
         },
         child: new ListTile(
           title: Text(
@@ -95,7 +144,8 @@ class _AllPageState extends State<AllPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => new ImagePreViewWidget(url: ganHuo['url']),
+                  builder: (context) =>
+                  new ImagePreViewWidget(url: ganHuo['url']),
                 ));
           },
           child: CachedNetworkImage(
