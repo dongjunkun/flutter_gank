@@ -73,7 +73,7 @@ class _AllPageState extends State<AllPage> {
           itemCount: list.length,
           itemBuilder: (BuildContext context, int index) {
             if (list.elementAt(index)['type'] == '福利') {
-              return _buildImageItem(list.elementAt(index));
+              return _buildImageItem(list.elementAt(index)['url']);
             } else {
               return _buildTextItem(list.elementAt(index));
             }
@@ -106,8 +106,10 @@ class _AllPageState extends State<AllPage> {
       list.clear();
     }
     list.addAll(ganhuos);
-    PageStorage.of(context).writeState(context, list,identifier:_dataIdentifier );
-    PageStorage.of(context).writeState(context, _page,identifier: _pageIdentifier);
+    PageStorage.of(context).writeState(
+        context, list, identifier: _dataIdentifier);
+    PageStorage.of(context).writeState(
+        context, _page, identifier: _pageIdentifier);
 
     setState(() {
 
@@ -115,9 +117,43 @@ class _AllPageState extends State<AllPage> {
   }
 
   Widget _buildTextItem(dynamic ganHuo) {
-    TextDecoration.underline;
-    return new Card(
-      child: new InkWell(
+    List<dynamic> urls = ganHuo['images'];
+
+    if (urls != null && urls.length > 0) {
+      return new Column(
+        children: <Widget>[
+          new InkWell(
+            onTap: () {
+              _globalKey.currentState.showSnackBar(
+                  SnackBar(content: Text(ganHuo['desc'])));
+            },
+            child: new ListTile(
+              title: Text(
+                ganHuo['desc'],
+                textAlign: TextAlign.justify,
+                style: TextStyle(decoration: TextDecoration.none),
+              ),
+            ),
+          ),
+          new SizedBox.fromSize(
+            size: Size.fromHeight(200.0),
+            child: new ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: urls.length,
+              shrinkWrap: false,
+              padding: const EdgeInsets.only(left: 8.0,right: 8.0),
+              itemBuilder: (context, index) {
+               return _buildImageItem(urls.elementAt(index));
+//                new Container(
+//                    color: Colors.red,
+//                    child: new Text('aaaaaaaaaaaaaaaa'));
+              },
+            ),
+          ),
+        ],
+      );
+    } else {
+      return new InkWell(
         onTap: () {
           _globalKey.currentState.showSnackBar(
               SnackBar(content: Text(ganHuo['desc'])));
@@ -129,15 +165,14 @@ class _AllPageState extends State<AllPage> {
             style: TextStyle(decoration: TextDecoration.none),
           ),
         ),
-      ),
-    );
+      );
+    }
   }
 
-  Widget _buildImageItem(dynamic ganHuo) {
+  Widget _buildImageItem(String url) {
     return new Card(
-
       child: new Hero(
-        tag: ganHuo['url'],
+        tag: url,
 //          child: Image.network(ganHuo['url'])
         child: new InkWell(
           onTap: () {
@@ -145,11 +180,11 @@ class _AllPageState extends State<AllPage> {
                 context,
                 MaterialPageRoute(
                   builder: (context) =>
-                  new ImagePreViewWidget(url: ganHuo['url']),
+                  new ImagePreViewWidget(url: url),
                 ));
           },
           child: CachedNetworkImage(
-            imageUrl: ganHuo['url'],
+            imageUrl: url,
           ),
         ),
       ),
