@@ -1,6 +1,6 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:gank_app/options.dart';
 
 class AllPage extends StatefulWidget {
@@ -29,10 +29,12 @@ class _AllPageState extends State<AllPage> {
     _pageIdentifier = '${widget.type}_pageIdentifier';
     _dataIdentifier = '${widget.type}_dataIdentifier';
 
-    _page = PageStorage.of(context).readState(
-        context, identifier: _pageIdentifier);
-    list.addAll(PageStorage.of(context).readState(
-        context, identifier: _dataIdentifier) ?? []);
+    _page =
+        PageStorage.of(context).readState(context, identifier: _pageIdentifier);
+    list.addAll(PageStorage
+            .of(context)
+            .readState(context, identifier: _dataIdentifier) ??
+        []);
   }
 
   @override
@@ -96,7 +98,7 @@ class _AllPageState extends State<AllPage> {
     }
     Dio dio = new Dio();
     Response response =
-    await dio.get("http://gank.io/api/data/$type/$pageSize/$_page");
+        await dio.get("http://gank.io/api/data/$type/$pageSize/$_page");
 
     Map<String, dynamic> map = response.data;
     List<dynamic> ganhuos = map['results'];
@@ -106,14 +108,14 @@ class _AllPageState extends State<AllPage> {
       list.clear();
     }
     list.addAll(ganhuos);
-    PageStorage.of(context).writeState(
-        context, list, identifier: _dataIdentifier);
-    PageStorage.of(context).writeState(
-        context, _page, identifier: _pageIdentifier);
+    PageStorage
+        .of(context)
+        .writeState(context, list, identifier: _dataIdentifier);
+    PageStorage
+        .of(context)
+        .writeState(context, _page, identifier: _pageIdentifier);
 
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   Widget _buildTextItem(dynamic ganHuo) {
@@ -153,19 +155,19 @@ class _AllPageState extends State<AllPage> {
         ],
       );
     } else {
-      return new InkWell(
-        onTap: () {
-          _globalKey.currentState.showSnackBar(
-              SnackBar(content: Text(ganHuo['desc'])));
-        },
-        child: new ListTile(
-          title: Text(
-            ganHuo['desc'],
-            textAlign: TextAlign.justify,
-            style: TextStyle(decoration: TextDecoration.none),
-          ),
+    return new InkWell(
+      onTap: () {
+        _globalKey.currentState
+            .showSnackBar(SnackBar(content: Text(ganHuo['desc'])));
+      },
+      child: new ListTile(
+        title: Text(
+          ganHuo['desc'],
+          textAlign: TextAlign.justify,
+          style: TextStyle(decoration: TextDecoration.none),
         ),
-      );
+      ),
+    );
     }
   }
 
@@ -179,12 +181,11 @@ class _AllPageState extends State<AllPage> {
             Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) =>
-                  new ImagePreViewWidget(url: url),
+                  builder: (context) => new ImagePreViewWidget(url: url),
                 ));
           },
-          child: CachedNetworkImage(
-            imageUrl: url,
+          child: Image(
+            image: AdvancedNetworkImage(url),
           ),
         ),
       ),
@@ -209,8 +210,9 @@ class ImagePreViewWidget extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Hero(
-                  tag: url,
-                  child: CachedNetworkImage(imageUrl: url),
-                ))));
+                    tag: url,
+                    child: Image(
+                      image: AdvancedNetworkImage(url),
+                    )))));
   }
 }

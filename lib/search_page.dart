@@ -15,7 +15,13 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: TextField(
           decoration: InputDecoration(
-            hintText: 'input key word'
+            hintText: '搜索真的好了，不骗你',
+            hintStyle: TextStyle(
+              color: Colors.white.withAlpha(100)
+            )
+          ),
+          style: TextStyle(
+            color: Colors.white
           ),
         ),
       ),

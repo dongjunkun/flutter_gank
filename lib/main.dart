@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:gank_app/all_page.dart';
 import 'package:gank_app/girl_page.dart';
 import 'package:gank_app/search_page.dart';
+import 'package:gank_app/common_view/no_network_view.dart';
 
 void main() => runApp(new MyApp());
 
@@ -14,8 +15,10 @@ class MyApp extends StatelessWidget {
       title: '干货集中营',
       theme: new ThemeData(
         primarySwatch: Colors.brown,
+        platform: TargetPlatform.iOS
       ),
       initialRoute: '/',
+//    home: NoNetworkView(),
       routes: {
         '/': (context) => MyHomePage(),
         '/search': (context) => SearchPage()

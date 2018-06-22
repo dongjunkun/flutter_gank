@@ -1,8 +1,8 @@
 import 'dart:async';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gank_app/options.dart';
 
@@ -30,11 +30,13 @@ class _GirlPageState extends State<GirlPage> {
     _pageIdentifier = '福利_pageIdentifier';
     _dataIdentifier = '福利_dataIdentifier';
     _page = PageStorage
-        .of(context)
-        .readState(context, identifier: _pageIdentifier) ??
+            .of(context)
+            .readState(context, identifier: _pageIdentifier) ??
         1;
-    list.addAll(PageStorage.of(context).readState(
-        context, identifier: _dataIdentifier) ?? []);
+    list.addAll(PageStorage
+            .of(context)
+            .readState(context, identifier: _dataIdentifier) ??
+        []);
   }
 
   @override
@@ -68,7 +70,6 @@ class _GirlPageState extends State<GirlPage> {
     _scrollController.removeListener(_handleScroll);
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -111,12 +112,11 @@ class _GirlPageState extends State<GirlPage> {
       _page = 1;
     }
     Dio dio = new Dio();
-    Response response = await dio.get(
-        "http://gank.io/api/data/福利/$pageSize/$_page");
+    Response response =
+        await dio.get("http://gank.io/api/data/福利/$pageSize/$_page");
 
     Map<String, dynamic> map = response.data;
     List<dynamic> ganhuos = map['results'];
-
 
     _page++;
     if (isClean) {
@@ -124,10 +124,12 @@ class _GirlPageState extends State<GirlPage> {
     } else {}
 
     list.addAll(ganhuos);
-    PageStorage.of(context).writeState(
-        context, list, identifier: _dataIdentifier);
-    PageStorage.of(context).writeState(
-        context, _page, identifier: _pageIdentifier);
+    PageStorage
+        .of(context)
+        .writeState(context, list, identifier: _dataIdentifier);
+    PageStorage
+        .of(context)
+        .writeState(context, _page, identifier: _pageIdentifier);
     setState(() {});
   }
 
@@ -141,11 +143,11 @@ class _GirlPageState extends State<GirlPage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                new ImagePreViewWidget(url: ganHuo['url']),
+                    new ImagePreViewWidget(url: ganHuo['url']),
               ));
         },
-        child: CachedNetworkImage(
-          imageUrl: ganHuo['url'],
+        child: Image(
+          image: AdvancedNetworkImage(ganHuo['url']),
         ),
       ),
     );
@@ -169,8 +171,9 @@ class ImagePreViewWidget extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Hero(
-                  tag: url,
-                  child: CachedNetworkImage(imageUrl: url),
-                ))));
+                    tag: url,
+                    child: Image(
+                      image: AdvancedNetworkImage(url),
+                    )))));
   }
 }
