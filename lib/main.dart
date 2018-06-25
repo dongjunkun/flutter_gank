@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:gank_app/all_page.dart';
 import 'package:gank_app/girl_page.dart';
 import 'package:gank_app/search_page.dart';
-import 'dart:ui' as ui;
 
 void main() => runApp(new MyHomePage());
 
@@ -17,12 +16,12 @@ class MyApp extends StatelessWidget {
       title: '干货集中营',
       theme: _value
           ? new ThemeData(
-        primarySwatch: Colors.brown,
+              primarySwatch: Colors.brown, primaryColor: Colors.brown
 //        platform: TargetPlatform.iOS
-      )
+              )
           : new ThemeData(
-        primarySwatch: Colors.pink,
-      ),
+              primarySwatch: Colors.pink, primaryColor: Colors.pink
+            ),
       initialRoute: '/',
 //    home: NoNetworkView(),
       routes: {
@@ -53,19 +52,20 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
+    MaterialPageRoute.debugEnableFadingRoutes = true;
     return MaterialApp(
       title: '干货集中营',
       theme: _value
           ? new ThemeData(
-          primarySwatch: Colors.brown,
+              primarySwatch: Colors.brown,
 //          brightness: Brightness.light,
-          platform: TargetPlatform.iOS
+          platform: TargetPlatform.android
       )
           : new ThemeData(
         primarySwatch: Colors.pink,
 //          brightness: Brightness.dark,
-          platform: TargetPlatform.android
-      ),
+          platform: TargetPlatform.iOS
+              ),
       home: new WillPopScope(
         child: new Scaffold(
           key: _globalKey,
@@ -118,14 +118,12 @@ class _MyHomePageState extends State<MyHomePage>
           drawer: Container(
             color: Colors.white,
             height: double.infinity,
-            width: /*MediaQuery.of(context).size.width*/400 - 56.0,
+            width: /*MediaQuery.of(context).size.width*/ 300.0,
             child: Column(
               children: <Widget>[
                 FlutterLogo(
                   size: 200.0,
-                  colors: Theme
-                      .of(context)
-                      .primaryColor,
+                  colors: Theme.of(context).primaryColor,
                   style: FlutterLogoStyle.horizontal,
                 ),
                 Switch(
@@ -140,9 +138,7 @@ class _MyHomePageState extends State<MyHomePage>
           ),
         ),
         onWillPop: () {
-          int newTime = DateTime
-              .now()
-              .millisecondsSinceEpoch;
+          int newTime = DateTime.now().millisecondsSinceEpoch;
           int result = newTime - lastTime;
           lastTime = newTime;
           if (result > 2000) {
