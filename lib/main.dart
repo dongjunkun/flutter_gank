@@ -3,9 +3,11 @@ import 'package:flutter/services.dart';
 import 'package:gank_app/all_page.dart';
 import 'package:gank_app/girl_page.dart';
 import 'package:gank_app/search_page.dart';
-import 'package:gank_app/common_view/no_network_view.dart';
+import 'dart:ui' as ui;
 
-void main() => runApp(new MyApp());
+void main() => runApp(new MyHomePage());
+
+bool _value = true;
 
 class MyApp extends StatelessWidget {
   @override
@@ -13,9 +15,13 @@ class MyApp extends StatelessWidget {
     MaterialPageRoute.debugEnableFadingRoutes = true;
     return new MaterialApp(
       title: '干货集中营',
-      theme: new ThemeData(
+      theme: _value
+          ? new ThemeData(
         primarySwatch: Colors.brown,
-        platform: TargetPlatform.iOS
+//        platform: TargetPlatform.iOS
+      )
+          : new ThemeData(
+        primarySwatch: Colors.pink,
       ),
       initialRoute: '/',
 //    home: NoNetworkView(),
@@ -47,76 +53,106 @@ class _MyHomePageState extends State<MyHomePage>
 
   @override
   Widget build(BuildContext context) {
-    return new WillPopScope(
-      child: new Scaffold(
-        key: _globalKey,
-        appBar: new AppBar(
-          title: new Text('干货集中营'),
-          leading: IconButton(
-            onPressed: () {
-              setState(() {
-                _globalKey.currentState.openDrawer();
-              });
-            },
-            icon: Icon(Icons.menu),
-          ),
-          actions: <Widget>[
-            IconButton(
-              onPressed: () {
-                Navigator.pushNamed(context, SearchPage.realName);
-              },
-              icon: Icon(Icons.search),
-            )
-          ],
-          bottom: TabBar(
-            controller: tabController,
-            isScrollable: true,
-            indicatorSize: TabBarIndicatorSize.label,
-            tabs: <Widget>[
-              Tab(text: '全部'),
-              Tab(text: '福利'),
-              Tab(text: 'Android'),
-              Tab(text: 'iOS'),
-              Tab(text: '休息视频'),
-              Tab(text: '前端'),
-              Tab(text: '拓展资源'),
-              Tab(text: 'App'),
-              Tab(text: '瞎推荐'),
-            ],
-          ),
-        ),
-        body: TabBarView(controller: tabController, children: <Widget>[
-          AllPage(type: 'all'),
-          GirlPage(),
-          AllPage(type: 'Android'),
-          AllPage(type: 'iOS'),
-          AllPage(type: '休息视频'),
-          AllPage(type: '前端'),
-          AllPage(type: '拓展资源'),
-          AllPage(type: 'App'),
-          AllPage(type: '瞎推荐'),
-        ]),
-        drawer: Container(
-          color: Colors.white,
-          height: double.infinity,
-          width: MediaQuery.of(context).size.width - 56,
-          child: FlutterLogo(
-            colors: Colors.brown,
-            style: FlutterLogoStyle.horizontal,
-          ),
-        ),
+    return MaterialApp(
+      title: '干货集中营',
+      theme: _value
+          ? new ThemeData(
+          primarySwatch: Colors.brown,
+//          brightness: Brightness.light,
+          platform: TargetPlatform.iOS
+      )
+          : new ThemeData(
+        primarySwatch: Colors.pink,
+//          brightness: Brightness.dark,
+          platform: TargetPlatform.android
       ),
-      onWillPop: () {
-        int newTime = DateTime.now().millisecondsSinceEpoch;
-        int result = newTime - lastTime;
-        lastTime = newTime;
-        if (result > 2000) {
-          _globalKey.currentState
-              .showSnackBar(SnackBar(content: Text('再按一次退出系统！')));
-        } else {
-          SystemNavigator.pop();
-        }
-      },
+      home: new WillPopScope(
+        child: new Scaffold(
+          key: _globalKey,
+          appBar: new AppBar(
+            title: new Text('干货集中营'),
+            leading: IconButton(
+              onPressed: () {
+                setState(() {
+                  _globalKey.currentState.openDrawer();
+                });
+              },
+              icon: Icon(Icons.menu),
+            ),
+            actions: <Widget>[
+              IconButton(
+                onPressed: () {
+                  Navigator.pushNamed(context, SearchPage.realName);
+                },
+                icon: Icon(Icons.search),
+              )
+            ],
+            bottom: TabBar(
+              controller: tabController,
+              isScrollable: true,
+              indicatorSize: TabBarIndicatorSize.label,
+              tabs: <Widget>[
+                Tab(text: '全部'),
+                Tab(text: '福利'),
+                Tab(text: 'Android'),
+                Tab(text: 'iOS'),
+                Tab(text: '休息视频'),
+                Tab(text: '前端'),
+                Tab(text: '拓展资源'),
+                Tab(text: 'App'),
+                Tab(text: '瞎推荐'),
+              ],
+            ),
+          ),
+          body: TabBarView(controller: tabController, children: <Widget>[
+            AllPage(type: 'all'),
+            GirlPage(),
+            AllPage(type: 'Android'),
+            AllPage(type: 'iOS'),
+            AllPage(type: '休息视频'),
+            AllPage(type: '前端'),
+            AllPage(type: '拓展资源'),
+            AllPage(type: 'App'),
+            AllPage(type: '瞎推荐'),
+          ]),
+          drawer: Container(
+            color: Colors.white,
+            height: double.infinity,
+            width: /*MediaQuery.of(context).size.width*/400 - 56.0,
+            child: Column(
+              children: <Widget>[
+                FlutterLogo(
+                  size: 200.0,
+                  colors: Theme
+                      .of(context)
+                      .primaryColor,
+                  style: FlutterLogoStyle.horizontal,
+                ),
+                Switch(
+                    value: _value,
+                    onChanged: (value) {
+                      setState(() {
+                        _value = value;
+                      });
+                    }),
+              ],
+            ),
+          ),
+        ),
+        onWillPop: () {
+          int newTime = DateTime
+              .now()
+              .millisecondsSinceEpoch;
+          int result = newTime - lastTime;
+          lastTime = newTime;
+          if (result > 2000) {
+            _globalKey.currentState
+                .showSnackBar(SnackBar(content: Text('再按一次退出系统！')));
+          } else {
+            SystemNavigator.pop();
+          }
+        },
+      ),
     );
   }
 }
