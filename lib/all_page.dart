@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:gank_app/options.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'dart:async';
 
 class AllPage extends StatefulWidget {
   final String type;
@@ -92,7 +94,15 @@ class _AllPageState extends State<AllPage> {
     }
   }
 
-  getData(bool isClean, String type) async {
+  Future<Null> launcherUrl(String url) async{
+    if(await canLaunch(url)){
+      await launch(url,forceSafariVC: false,forceWebView: false);
+    }else{
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<Null> getData(bool isClean, String type) async {
     if (isClean) {
       _page = 1;
     }
@@ -157,8 +167,9 @@ class _AllPageState extends State<AllPage> {
 //    } else {
     return new InkWell(
       onTap: () {
-        _globalKey.currentState
-            .showSnackBar(SnackBar(content: Text(ganHuo['desc'])));
+//        _globalKey.currentState
+//            .showSnackBar(SnackBar(content: Text(ganHuo['desc'])));
+        launcherUrl(ganHuo['url']);
       },
       child: new ListTile(
         title: Text(
