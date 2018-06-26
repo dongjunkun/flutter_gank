@@ -5,6 +5,8 @@ import 'package:gank_app/gank_configuration.dart';
 import 'package:gank_app/girl_page.dart';
 import 'package:gank_app/search_page.dart';
 import 'package:gank_app/recommend_page.dart';
+import 'dart:async';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   HomePage(this.configuration, this.updater);
@@ -29,14 +31,18 @@ class _HomePageState extends State<HomePage>
     tabController = TabController(length: 9, vsync: this);
   }
 
-  void _handleThemeChange(ThemeType value) {
+  Future<Null> _handleThemeChange(ThemeType value) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (widget.updater != null) {
+      prefs.setInt('theme', value.index);
       widget.updater(widget.configuration.copyWith(themeType: value));
     }
   }
 
-  void _handlePlatformChange(PlatForm value) {
+  Future<Null> _handlePlatformChange(PlatForm value) async{
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (widget.updater != null) {
+      prefs.setInt('platform', value.index);
       widget.updater(widget.configuration.copyWith(platForm: value));
     }
   }
