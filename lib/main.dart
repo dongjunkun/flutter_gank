@@ -27,7 +27,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    print('_MyAppState.build');
     MaterialPageRoute.debugEnableFadingRoutes = true;
     return MaterialApp(
       title: '干货集中营',
@@ -42,7 +41,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   void initState() {
-    print('_MyAppState.initState');
     super.initState();
     _loadConfig();
   }
@@ -55,8 +53,7 @@ class _MyAppState extends State<MyApp> {
         PlatForm.values.elementAt(prefs.getInt('platform') ?? 0);
     _configuration =
         _configuration.copyWith(themeType: themeType, platForm: platForm);
-    print(_configuration.platForm);
-    configurationUpdater(_configuration.copyWith(themeType: themeType, platForm: platForm));
+    configurationUpdater(_configuration);
   }
 
 
@@ -81,13 +78,12 @@ class _MyAppState extends State<MyApp> {
         );
       case ThemeType.light:
         return ThemeData(
-          primarySwatch: Colors.blue,
+          primaryColor: Colors.white,
           brightness: Brightness.light,
           platform: platform,
         );
       case ThemeType.dark:
         return ThemeData(
-          primarySwatch: Colors.blue,
           brightness: Brightness.dark,
           accentColor: Colors.red,
           platform: platform,
@@ -98,9 +94,14 @@ class _MyAppState extends State<MyApp> {
           brightness: Brightness.light,
           platform: platform,
         );
-      case ThemeType.purple:
+      case ThemeType.teal:
         return ThemeData(
-          primarySwatch: Colors.purple,
+          primarySwatch: Colors.teal,
+          platform: platform,
+        );
+      case ThemeType.blue:
+        return ThemeData(
+          primarySwatch: Colors.blue,
           platform: platform,
         );
     }

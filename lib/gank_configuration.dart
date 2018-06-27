@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-enum ThemeType { dark, light, brown, pink, purple }
+enum ThemeType { light, dark, brown, pink, teal, blue }
 enum PlatForm { android, iOS }
 
 class GankConfiguration {
