@@ -58,11 +58,13 @@ class _GirlPageState extends State<GirlPage> {
   }
 
   Future<Null> _handleRefresh() {
-    final Completer<Null> completer = new Completer<Null>();
-    new Timer(const Duration(seconds: 3), () {
-      completer.complete(null);
-    });
-    return completer.future;
+//    final Completer<Null> completer = new Completer<Null>();
+//    new Timer(const Duration(seconds: 3), () {
+//      completer.complete(null);
+//    });
+//    return completer.future;
+  return getData(true);
+
   }
 
   @override
@@ -107,13 +109,13 @@ class _GirlPageState extends State<GirlPage> {
     }
   }
 
-  Future getData(bool isClean) async {
+  Future<Null> getData(bool isClean) async {
     if (isClean) {
       _page = 1;
     }
     Dio dio = new Dio();
     Response response =
-        await dio.get("http://gank.io/api/data/福利/$pageSize/$_page");
+        await dio.get("http://gank.io/api/random/data/福利/$pageSize");
 
     Map<String, dynamic> map = response.data;
     List<dynamic> ganhuos = map['results'];
@@ -124,6 +126,7 @@ class _GirlPageState extends State<GirlPage> {
     } else {}
 
     list.addAll(ganhuos);
+//    list = list.toSet().toList(growable: true);
     PageStorage
         .of(context)
         .writeState(context, list, identifier: _dataIdentifier);

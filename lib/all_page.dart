@@ -17,6 +17,7 @@ class AllPage extends StatefulWidget {
 class _AllPageState extends State<AllPage> {
   List<dynamic> list = List<dynamic>();
   GlobalKey<ScaffoldState> _globalKey = GlobalKey();
+  GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey();
 
   String _pageIdentifier;
   String _dataIdentifier;
@@ -49,6 +50,11 @@ class _AllPageState extends State<AllPage> {
     _scrollController.addListener(_handleScroll);
   }
 
+  Future<Null> _handleRefresh(){
+    return getData(true, widget.type);
+
+  }
+
   @override
   void dispose() {
     _scrollController.removeListener(_handleScroll);
@@ -72,20 +78,23 @@ class _AllPageState extends State<AllPage> {
     } else {
       return new Scaffold(
         key: _globalKey,
-        body: new ListView.builder(
-          controller: _scrollController,
-          itemCount: list.length,
-          itemBuilder: (BuildContext context, int index) {
-            if (list.elementAt(index)['type'] == '福利') {
-              return _buildImageItem(list.elementAt(index)['url']);
-            } else {
-              return _buildTextItem(list.elementAt(index));
-            }
-          },
+        body: RefreshIndicator(
+          key: _refreshIndicatorKey,
+          child: new ListView.builder(
+            controller: _scrollController,
+            itemCount: list.length,
+            itemBuilder: (BuildContext context, int index) {
+              if (list.elementAt(index)['type'] == '福利') {
+                return _buildImageItem(list.elementAt(index)['url']);
+              } else {
+                return _buildTextItem(list.elementAt(index));
+              }
+            },
+          ), onRefresh: _handleRefresh,
         ),
         floatingActionButton: new FloatingActionButton(
           onPressed: () {
-            getData(true, widget.type);
+            _refreshIndicatorKey.currentState.show();
           },
           tooltip: 'refresh',
           child: new Icon(Icons.refresh),
