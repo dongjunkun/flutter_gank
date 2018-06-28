@@ -7,12 +7,16 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gank_app/options.dart';
 
 class GirlPage extends StatefulWidget {
+  bool random = false;
+
+  GirlPage({Key key, @required this.random}) : super(key: key);
+
   @override
   _GirlPageState createState() => new _GirlPageState();
 }
 
 class _GirlPageState extends State<GirlPage> {
-  List<dynamic> list = List<dynamic>();
+  List<dynamic> list =[];
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey();
@@ -63,8 +67,7 @@ class _GirlPageState extends State<GirlPage> {
 //      completer.complete(null);
 //    });
 //    return completer.future;
-  return getData(true);
-
+    return getData(true);
   }
 
   @override
@@ -114,8 +117,13 @@ class _GirlPageState extends State<GirlPage> {
       _page = 1;
     }
     Dio dio = new Dio();
-    Response response =
-        await dio.get("http://gank.io/api/random/data/福利/$pageSize");
+    String url;
+    if (widget.random) {
+      url = 'http://gank.io/api/random/data/福利/$pageSize';
+    } else {
+      url = 'http://gank.io/api/data/福利/$pageSize/$_page';
+    }
+    Response response = await dio.get(url);
 
     Map<String, dynamic> map = response.data;
     List<dynamic> ganhuos = map['results'];

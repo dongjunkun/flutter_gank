@@ -1,9 +1,10 @@
+import 'dart:async';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:gank_app/options.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:async';
 
 class AllPage extends StatefulWidget {
   final String type;
@@ -15,7 +16,7 @@ class AllPage extends StatefulWidget {
 }
 
 class _AllPageState extends State<AllPage> {
-  List<dynamic> list = List<dynamic>();
+  List<dynamic> list = [];
   GlobalKey<ScaffoldState> _globalKey = GlobalKey();
   GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey();
 
@@ -50,9 +51,8 @@ class _AllPageState extends State<AllPage> {
     _scrollController.addListener(_handleScroll);
   }
 
-  Future<Null> _handleRefresh(){
+  Future<Null> _handleRefresh() {
     return getData(true, widget.type);
-
   }
 
   @override
@@ -90,7 +90,8 @@ class _AllPageState extends State<AllPage> {
                 return _buildTextItem(list.elementAt(index));
               }
             },
-          ), onRefresh: _handleRefresh,
+          ),
+          onRefresh: _handleRefresh,
         ),
         floatingActionButton: new FloatingActionButton(
           onPressed: () {
@@ -103,10 +104,10 @@ class _AllPageState extends State<AllPage> {
     }
   }
 
-  Future<Null> launcherUrl(String url) async{
-    if(await canLaunch(url)){
-      await launch(url,forceSafariVC: false,forceWebView: false);
-    }else{
+  Future<Null> launcherUrl(String url) async {
+    if (await canLaunch(url)) {
+      await launch(url, forceSafariVC: false, forceWebView: false);
+    } else {
       throw 'Could not launch $url';
     }
   }
@@ -127,6 +128,7 @@ class _AllPageState extends State<AllPage> {
       list.clear();
     }
     list.addAll(ganhuos);
+
     PageStorage
         .of(context)
         .writeState(context, list, identifier: _dataIdentifier);
@@ -181,6 +183,10 @@ class _AllPageState extends State<AllPage> {
         launcherUrl(ganHuo['url']);
       },
       child: new ListTile(
+//        leading: Icon(Icons.android,
+//          size: 16.0,
+//
+//        ),
         title: Text(
           ganHuo['desc'],
           textAlign: TextAlign.justify,
@@ -192,20 +198,23 @@ class _AllPageState extends State<AllPage> {
   }
 
   Widget _buildImageItem(String url) {
-    return new Card(
-      child: new Hero(
-        tag: url,
+    return Padding(
+      padding: const EdgeInsets.only(left: 12.0, right: 100.0),
+      child: new Card(
+        child: new Hero(
+          tag: url,
 //          child: Image.network(ganHuo['url'])
-        child: new InkWell(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => new ImagePreViewWidget(url: url),
-                ));
-          },
-          child: Image(
-            image: AdvancedNetworkImage(url),
+          child: new InkWell(
+            onTap: () {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => new ImagePreViewWidget(url: url),
+                  ));
+            },
+            child: Image(
+              image: AdvancedNetworkImage(url),
+            ),
           ),
         ),
       ),

@@ -15,15 +15,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  GankConfiguration _configuration =
-      GankConfiguration(platForm: PlatForm.android, themeType: ThemeType.light);
+  GankConfiguration _configuration = GankConfiguration(
+      platForm: PlatForm.android,
+      themeType: ThemeType.light,
+      randomMeizhi: false);
 
   void configurationUpdater(GankConfiguration value) {
     setState(() {
       _configuration = value;
     });
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -51,11 +52,10 @@ class _MyAppState extends State<MyApp> {
         ThemeType.values.elementAt(prefs.getInt('theme') ?? 0);
     PlatForm platForm =
         PlatForm.values.elementAt(prefs.getInt('platform') ?? 0);
-    _configuration =
-        _configuration.copyWith(themeType: themeType, platForm: platForm);
-    configurationUpdater(_configuration);
+    bool randomMeizhi = prefs.getBool('randomMeizhi' ?? false);
+    configurationUpdater(_configuration.copyWith(
+        themeType: themeType, platForm: platForm, ramdomMeizhi: randomMeizhi));
   }
-
 
   TargetPlatform get platform {
     switch (_configuration.platForm) {

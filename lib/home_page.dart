@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:gank_app/all_page.dart';
 import 'package:gank_app/gank_configuration.dart';
 import 'package:gank_app/girl_page.dart';
 import 'package:gank_app/search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter/services.dart';
 
 class HomePage extends StatefulWidget {
   HomePage(this.configuration, this.updater);
@@ -47,6 +47,14 @@ class _HomePageState extends State<HomePage>
     }
   }
 
+  Future<Null> _handleRandomMeizhiChange(bool value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (widget.updater != null) {
+      prefs.setBool('randomMeizhi', value);
+      widget.updater(widget.configuration.copyWith(ramdomMeizhi: value));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return new WillPopScope(
@@ -68,7 +76,7 @@ class _HomePageState extends State<HomePage>
                     Navigator.pushNamed(context, SearchPage.realName);
                   },
                   icon: Icon(Icons.search),
-                )
+                ),
               ],
               bottom: TabBar(
                 controller: tabController,
@@ -77,7 +85,7 @@ class _HomePageState extends State<HomePage>
                 tabs: <Widget>[
                   Tab(text: '全部'),
 //                Tab(text: '推荐'),
-                  Tab(text: '福利'),
+                  Tab(text: '妹纸图'),
                   Tab(text: 'Android'),
                   Tab(text: 'iOS'),
                   Tab(text: '休息视频'),
@@ -91,7 +99,7 @@ class _HomePageState extends State<HomePage>
             body: TabBarView(controller: tabController, children: <Widget>[
               AllPage(type: 'all'),
 //            RecommendPage(),
-              GirlPage(),
+              GirlPage(random: widget.configuration.randomMeizhi),
               AllPage(type: 'Android'),
               AllPage(type: 'iOS'),
               AllPage(type: '休息视频'),
@@ -198,6 +206,13 @@ class _HomePageState extends State<HomePage>
                     _handlePlatformChange(PlatForm.iOS);
                   },
                 ),
+                Divider(),
+                CheckboxListTile(
+                    title: Text('随机妹纸图'),
+                    value: widget.configuration.randomMeizhi,
+                    onChanged: (bool value) {
+                      _handleRandomMeizhiChange(value);
+                    }),
               ],
             ))),
         onWillPop: () {
