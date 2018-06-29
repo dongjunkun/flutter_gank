@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gank_app/options.dart';
+import 'package:gank_app/model/ganhuo.dart';
 
 class GirlPage extends StatefulWidget {
   bool random = false;
@@ -16,7 +17,7 @@ class GirlPage extends StatefulWidget {
 }
 
 class _GirlPageState extends State<GirlPage> {
-  List<dynamic> list =[];
+  List<GanHuo> list =[];
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey();
@@ -46,15 +47,11 @@ class _GirlPageState extends State<GirlPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // 获取到 NestedScrollView 为子 ScrollView 添加的特殊 ScrollController
-    // 如果自己为 ScrollView 添加一个新的 ScrollController 会导致
-    // NestedScrollView 和 SliverAppBar 带来的自动隐藏 AppBar 失效
     _scrollController = ScrollController();
     _scrollController.addListener(_handleScroll);
   }
 
   void _handleScroll() {
-    print('_GirlPageState._handleScroll');
     if (_scrollController.position.pixels ==
         _scrollController.position.maxScrollExtent) {
       getData(false);
@@ -125,15 +122,13 @@ class _GirlPageState extends State<GirlPage> {
     }
     Response response = await dio.get(url);
 
-    Map<String, dynamic> map = response.data;
-    List<dynamic> ganhuos = map['results'];
-
+    GanHuos ganHuos = GanHuos.fromJson(response.data);
     _page++;
     if (isClean) {
       list.clear();
     } else {}
 
-    list.addAll(ganhuos);
+    list.addAll(ganHuos.results);
 //    list = list.toSet().toList(growable: true);
     PageStorage
         .of(context)
@@ -144,9 +139,9 @@ class _GirlPageState extends State<GirlPage> {
     setState(() {});
   }
 
-  Widget _buildImageItem(dynamic ganHuo) {
+  Widget _buildImageItem(GanHuo ganHuo) {
     return new Hero(
-      tag: ganHuo['url'],
+      tag: ganHuo.url,
 //          child: Image.network(ganHuo['url'])
       child: new InkWell(
         onTap: () {
@@ -154,11 +149,11 @@ class _GirlPageState extends State<GirlPage> {
               context,
               MaterialPageRoute(
                 builder: (context) =>
-                    new ImagePreViewWidget(url: ganHuo['url']),
+                    new ImagePreViewWidget(url: ganHuo.url),
               ));
         },
         child: Image(
-          image: AdvancedNetworkImage(ganHuo['url']),
+          image: AdvancedNetworkImage(ganHuo.url),
         ),
       ),
     );

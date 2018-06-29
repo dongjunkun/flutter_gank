@@ -6,24 +6,24 @@ enum PlatForm { android, iOS }
 class GankConfiguration {
   ThemeType themeType;
   PlatForm platForm;
-  bool randomMeizhi = false;
+  bool random = false;
 
   GankConfiguration(
       {@required this.platForm,
       @required this.themeType,
-      @required this.randomMeizhi})
+      @required this.random})
       : assert(themeType != null),
-        assert(randomMeizhi != null),
+        assert(random != null),
         assert(platForm != null);
 
   GankConfiguration copyWith({
     ThemeType themeType,
     PlatForm platForm,
-    bool ramdomMeizhi,
+    bool random,
   }) {
     return GankConfiguration(
         themeType: themeType ?? this.themeType,
         platForm: platForm ?? this.platForm,
-        randomMeizhi: ramdomMeizhi ?? this.randomMeizhi);
+        random: random ?? this.random);
   }
 }

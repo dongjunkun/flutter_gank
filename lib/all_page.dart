@@ -5,18 +5,21 @@ import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:gank_app/options.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:gank_app/model/ganhuo.dart';
 
 class AllPage extends StatefulWidget {
   final String type;
+  bool random = false;
 
-  AllPage({Key key, @required this.type}) : super(key: key);
+  AllPage({Key key, @required this.type, @required this.random})
+      : super(key: key);
 
   @override
   _AllPageState createState() => new _AllPageState();
 }
 
 class _AllPageState extends State<AllPage> {
-  List<dynamic> list = [];
+  List<GanHuo> list = [];
   GlobalKey<ScaffoldState> _globalKey = GlobalKey();
   GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey();
 
@@ -44,9 +47,6 @@ class _AllPageState extends State<AllPage> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    // 获取到 NestedScrollView 为子 ScrollView 添加的特殊 ScrollController
-    // 如果自己为 ScrollView 添加一个新的 ScrollController 会导致
-    // NestedScrollView 和 SliverAppBar 带来的自动隐藏 AppBar 失效
     _scrollController = ScrollController();
     _scrollController.addListener(_handleScroll);
   }
@@ -84,8 +84,8 @@ class _AllPageState extends State<AllPage> {
             controller: _scrollController,
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
-              if (list.elementAt(index)['type'] == '福利') {
-                return _buildImageItem(list.elementAt(index)['url']);
+              if (list.elementAt(index).type == '福利') {
+                return _buildImageItem(list.elementAt(index).url);
               } else {
                 return _buildTextItem(list.elementAt(index));
               }
@@ -117,17 +117,23 @@ class _AllPageState extends State<AllPage> {
       _page = 1;
     }
     Dio dio = new Dio();
-    Response response =
-        await dio.get("http://gank.io/api/data/$type/$pageSize/$_page");
+    String url;
+    if (widget.random) {
+      url = 'http://gank.io/api/random/data/$type/$pageSize';
+    } else {
+      url = 'http://gank.io/api/data/$type/$pageSize/$_page';
+    }
+    Response response = await dio.get(url);
 
-    Map<String, dynamic> map = response.data;
-    List<dynamic> ganhuos = map['results'];
+//    Map<String, dynamic> map = response.data
+    GanHuos  ganHuos = GanHuos.fromJson(response.data);
+//    List<dynamic> ganhuos = map['results'];
 
     _page++;
     if (isClean) {
       list.clear();
     }
-    list.addAll(ganhuos);
+    list.addAll(ganHuos.results);
 
     PageStorage
         .of(context)
@@ -139,7 +145,7 @@ class _AllPageState extends State<AllPage> {
     setState(() {});
   }
 
-  Widget _buildTextItem(dynamic ganHuo) {
+  Widget _buildTextItem(GanHuo ganHuo) {
 //    List<dynamic> urls = ganHuo['images'];
 //
 //    if (urls != null && urls.length > 0) {
@@ -180,7 +186,7 @@ class _AllPageState extends State<AllPage> {
       onTap: () {
 //        _globalKey.currentState
 //            .showSnackBar(SnackBar(content: Text(ganHuo['desc'])));
-        launcherUrl(ganHuo['url']);
+        launcherUrl(ganHuo.url);
       },
       child: new ListTile(
 //        leading: Icon(Icons.android,
@@ -188,7 +194,7 @@ class _AllPageState extends State<AllPage> {
 //
 //        ),
         title: Text(
-          ganHuo['desc'],
+          ganHuo.desc,
           textAlign: TextAlign.justify,
           style: TextStyle(decoration: TextDecoration.none),
         ),

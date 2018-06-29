@@ -47,11 +47,11 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  Future<Null> _handleRandomMeizhiChange(bool value) async {
+  Future<Null> _handlerandomChange(bool value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (widget.updater != null) {
-      prefs.setBool('randomMeizhi', value);
-      widget.updater(widget.configuration.copyWith(ramdomMeizhi: value));
+      prefs.setBool('random', value);
+      widget.updater(widget.configuration.copyWith(random: value));
     }
   }
 
@@ -97,16 +97,16 @@ class _HomePageState extends State<HomePage>
               ),
             ),
             body: TabBarView(controller: tabController, children: <Widget>[
-              AllPage(type: 'all'),
+              AllPage(type: 'all',random: widget.configuration.random),
 //            RecommendPage(),
-              GirlPage(random: widget.configuration.randomMeizhi),
-              AllPage(type: 'Android'),
-              AllPage(type: 'iOS'),
-              AllPage(type: '休息视频'),
-              AllPage(type: '前端'),
-              AllPage(type: '拓展资源'),
-              AllPage(type: 'App'),
-              AllPage(type: '瞎推荐'),
+              GirlPage(random: widget.configuration.random),
+              AllPage(type: 'Android',random: widget.configuration.random),
+              AllPage(type: 'iOS',random: widget.configuration.random),
+              AllPage(type: '休息视频',random: widget.configuration.random),
+              AllPage(type: '前端',random: widget.configuration.random),
+              AllPage(type: '拓展资源',random: widget.configuration.random),
+              AllPage(type: 'App',random: widget.configuration.random),
+              AllPage(type: '瞎推荐',random: widget.configuration.random),
             ]),
             drawer: Drawer(
                 child: ListView(
@@ -208,10 +208,10 @@ class _HomePageState extends State<HomePage>
                 ),
                 Divider(),
                 CheckboxListTile(
-                    title: Text('随机妹纸图'),
-                    value: widget.configuration.randomMeizhi,
+                    title: Text('随机模式'),
+                    value: widget.configuration.random,
                     onChanged: (bool value) {
-                      _handleRandomMeizhiChange(value);
+                      _handlerandomChange(value);
                     }),
               ],
             ))),

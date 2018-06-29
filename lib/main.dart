@@ -18,7 +18,7 @@ class _MyAppState extends State<MyApp> {
   GankConfiguration _configuration = GankConfiguration(
       platForm: PlatForm.android,
       themeType: ThemeType.light,
-      randomMeizhi: false);
+      random: false);
 
   void configurationUpdater(GankConfiguration value) {
     setState(() {
@@ -52,9 +52,9 @@ class _MyAppState extends State<MyApp> {
         ThemeType.values.elementAt(prefs.getInt('theme') ?? 0);
     PlatForm platForm =
         PlatForm.values.elementAt(prefs.getInt('platform') ?? 0);
-    bool randomMeizhi = prefs.getBool('randomMeizhi' ?? false);
+    bool random = prefs.getBool('random' ?? false);
     configurationUpdater(_configuration.copyWith(
-        themeType: themeType, platForm: platForm, ramdomMeizhi: randomMeizhi));
+        themeType: themeType, platForm: platForm, random: random));
   }
 
   TargetPlatform get platform {

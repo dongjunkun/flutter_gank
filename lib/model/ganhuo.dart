@@ -1,16 +1,17 @@
+part 'package:gank_app/model/ganhuo.g.dart';
 
-class GanHuos {
+class GanHuos extends Object with _GanHuosSerializerMiXin{
   final bool error;
   final List<GanHuo> results;
 
   GanHuos(this.error, this.results);
 
-  GanHuos.fromJson(Map<String, dynamic> json)
-      : error = json['error'],
-        results = json['results'];
+  factory GanHuos.fromJson(Map<String, dynamic> json)
+     => _$GanHuosFromJson(json);
+
 }
 
-class GanHuo {
+class GanHuo extends Object with _$GanHuoSerializerMiXin {
   final String _id;
   final String createdAt;
   final String desc;
@@ -24,4 +25,6 @@ class GanHuo {
 
   GanHuo(this._id, this.createdAt, this.desc, this.type, this.url,
       this.publishedAt, this.images, this.who, this.source, this.used);
+
+  factory GanHuo.formJson(Map<String, dynamic> json) => _$GanHuoFormJson(json);
 }
