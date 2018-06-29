@@ -28,7 +28,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 9, vsync: this);
+    tabController = TabController(initialIndex: 0,length: 9, vsync: this);
   }
 
   Future<Null> _handleThemeChange(ThemeType value) async {
@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage>
     }
   }
 
-  Future<Null> _handlerandomChange(bool value) async {
+  Future<Null> _handleRandomChange(bool value) async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
     if (widget.updater != null) {
       prefs.setBool('random', value);
@@ -211,7 +211,7 @@ class _HomePageState extends State<HomePage>
                     title: Text('随机模式'),
                     value: widget.configuration.random,
                     onChanged: (bool value) {
-                      _handlerandomChange(value);
+                      _handleRandomChange(value);
                     }),
               ],
             ))),

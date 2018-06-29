@@ -74,6 +74,7 @@ class _MyAppState extends State<MyApp> {
         return ThemeData(
           primarySwatch: Colors.brown,
           brightness: Brightness.light,
+          indicatorColor:Colors.white,
           platform: platform,
         );
       case ThemeType.light:
@@ -92,15 +93,18 @@ class _MyAppState extends State<MyApp> {
         return ThemeData(
           primarySwatch: Colors.pink,
           brightness: Brightness.light,
+          indicatorColor:Colors.white,
           platform: platform,
         );
       case ThemeType.teal:
         return ThemeData(
           primarySwatch: Colors.teal,
+          indicatorColor:Colors.white,
           platform: platform,
         );
       case ThemeType.blue:
         return ThemeData(
+          indicatorColor:Colors.white,
           primarySwatch: Colors.blue,
           platform: platform,
         );
