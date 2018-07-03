@@ -34,18 +34,20 @@ class _AllPageState extends State<AllPage> {
   final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _streamSubscription;
 
+  double scrollDistance = 0.0;
+
+
   @override
   void initState() {
     super.initState();
-
 
     _pageIdentifier = '${widget.type}_pageIdentifier';
     _dataIdentifier = '${widget.type}_dataIdentifier';
     _page =
         PageStorage.of(context).readState(context, identifier: _pageIdentifier);
     list.addAll(PageStorage
-            .of(context)
-            .readState(context, identifier: _dataIdentifier) ??
+        .of(context)
+        .readState(context, identifier: _dataIdentifier) ??
         []);
   }
 
@@ -73,6 +75,36 @@ class _AllPageState extends State<AllPage> {
         _scrollController.position.maxScrollExtent) {
       getData(false, widget.type);
     }
+    scrollDistance = _scrollController.position.pixels;
+    setState(() {
+
+    });
+  }
+
+  Widget _buildFloatActionButton() {
+    double screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
+    if (scrollDistance > screenHeight / 2) {
+      return FloatingActionButton(
+        onPressed: () {
+          _scrollController.animateTo(0.0, duration: Duration(
+              milliseconds: (scrollDistance / screenHeight).round() * 300),
+              curve: Curves.easeOut);
+        },
+        tooltip: 'top',
+        child: new Icon(Icons.arrow_upward),
+      );
+    } else {
+      return FloatingActionButton(
+        onPressed: () {
+          _refreshIndicatorKey.currentState.show();
+        },
+        tooltip: 'refresh',
+        child: new Icon(Icons.refresh),
+      );
+    }
   }
 
   @override
@@ -91,8 +123,12 @@ class _AllPageState extends State<AllPage> {
             controller: _scrollController,
             itemCount: list.length,
             itemBuilder: (BuildContext context, int index) {
-              if (list.elementAt(index).type == '福利') {
-                return _buildImageItem(list.elementAt(index).url);
+              if (list
+                  .elementAt(index)
+                  .type == '福利') {
+                return _buildImageItem(list
+                    .elementAt(index)
+                    .url);
               } else {
                 return _buildTextItem(list.elementAt(index));
               }
@@ -100,13 +136,7 @@ class _AllPageState extends State<AllPage> {
           ),
           onRefresh: _handleRefresh,
         ),
-        floatingActionButton: new FloatingActionButton(
-          onPressed: () {
-            _refreshIndicatorKey.currentState.show();
-          },
-          tooltip: 'refresh',
-          child: new Icon(Icons.refresh),
-        ),
+        floatingActionButton: _buildFloatActionButton(),
       );
     }
   }
@@ -225,18 +255,18 @@ class _AllPageState extends State<AllPage> {
   Widget _buildImageItem(String url) {
     return Padding(
       padding: const EdgeInsets.only(left: 12.0, right: 100.0),
-      child: new Card(
-        child: new Hero(
-          tag: url,
+      child: new GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => new ImagePreViewWidget(url: url),
+              ));
+        },
+        child: new Card(
+          child: new Hero(
+            tag: url,
 //          child: Image.network(ganHuo['url'])
-          child: new InkWell(
-            onTap: () {
-              Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => new ImagePreViewWidget(url: url),
-                  ));
-            },
             child: Image(
               image: AdvancedNetworkImage(url),
             ),

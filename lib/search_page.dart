@@ -25,9 +25,9 @@ class _SearchPageState extends State<SearchPage> {
           decoration: InputDecoration(
             hintText: '搜索真的好了，不骗你',
             border: InputBorder.none,
-            hintStyle: TextStyle(
-              color: Colors.white.withAlpha(100)
-            )
+//            hintStyle: TextStyle(
+//              color: Colors.white.withAlpha(100)
+//            )
           ),
           style: TextStyle(
             color: Colors.white

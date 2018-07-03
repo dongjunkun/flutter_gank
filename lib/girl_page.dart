@@ -140,18 +140,18 @@ class _GirlPageState extends State<GirlPage> {
   }
 
   Widget _buildImageItem(GanHuo ganHuo) {
-    return new Hero(
-      tag: ganHuo.url,
+    return new GestureDetector(
+      onTap: () {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+              new ImagePreViewWidget(url: ganHuo.url),
+            ));
+      },
+      child: new Hero(
+        tag: ganHuo.url,
 //          child: Image.network(ganHuo['url'])
-      child: new InkWell(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) =>
-                    new ImagePreViewWidget(url: ganHuo.url),
-              ));
-        },
         child: Image(
           image: AdvancedNetworkImage(ganHuo.url),
         ),
