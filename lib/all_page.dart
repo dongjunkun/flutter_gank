@@ -3,9 +3,10 @@ import 'dart:async';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
+import 'package:gank_app/model/ganhuo.dart';
 import 'package:gank_app/options.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:gank_app/model/ganhuo.dart';
+import 'package:connectivity/connectivity.dart';
 
 class AllPage extends StatefulWidget {
   final String type;
@@ -30,12 +31,16 @@ class _AllPageState extends State<AllPage> {
 
   ScrollController _scrollController;
 
+  final Connectivity _connectivity = Connectivity();
+  StreamSubscription<ConnectivityResult> _streamSubscription;
+
   @override
   void initState() {
     super.initState();
+
+
     _pageIdentifier = '${widget.type}_pageIdentifier';
     _dataIdentifier = '${widget.type}_dataIdentifier';
-
     _page =
         PageStorage.of(context).readState(context, identifier: _pageIdentifier);
     list.addAll(PageStorage
@@ -43,6 +48,7 @@ class _AllPageState extends State<AllPage> {
             .readState(context, identifier: _dataIdentifier) ??
         []);
   }
+
 
   @override
   void didChangeDependencies() {
@@ -58,6 +64,7 @@ class _AllPageState extends State<AllPage> {
   @override
   void dispose() {
     _scrollController.removeListener(_handleScroll);
+//    _streamSubscription.cancel();
     super.dispose();
   }
 
@@ -126,14 +133,26 @@ class _AllPageState extends State<AllPage> {
     Response response = await dio.get(url);
 
 //    Map<String, dynamic> map = response.data
-    GanHuos  ganHuos = GanHuos.fromJson(response.data);
+    GanHuos ganHuos = GanHuos.fromJson(response.data);
 //    List<dynamic> ganhuos = map['results'];
 
     _page++;
     if (isClean) {
       list.clear();
     }
+
     list.addAll(ganHuos.results);
+    if (!widget.random && type == 'all') {
+      list.sort((a, b) {
+        if (a.publishedAt == b.publishedAt) {
+          if (b.type == '福利' || b.type == "休息视频") {
+            if (b.type == "福利" && a.type == "休息视频") return -1;
+            return 1;
+          }
+        }
+        return b.publishedAt.compareTo(a.publishedAt);
+      });
+    }
 
     PageStorage
         .of(context)
@@ -195,7 +214,7 @@ class _AllPageState extends State<AllPage> {
 //        ),
         title: Text(
           ganHuo.desc,
-          textAlign: TextAlign.justify,
+          textAlign: TextAlign.start,
           style: TextStyle(decoration: TextDecoration.none),
         ),
       ),

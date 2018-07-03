@@ -21,6 +21,7 @@ class _SearchPageState extends State<SearchPage> {
       appBar: AppBar(
         title: TextField(
           controller: controller,
+          autofocus: true,
           decoration: InputDecoration(
             hintText: '搜索真的好了，不骗你',
             border: InputBorder.none,
