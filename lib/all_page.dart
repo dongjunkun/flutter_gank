@@ -1,12 +1,14 @@
 import 'dart:async';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
+import 'package:gank_app/common_view/error_view.dart';
+import 'package:gank_app/common_view/no_network_view.dart';
 import 'package:gank_app/model/ganhuo.dart';
 import 'package:gank_app/options.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:connectivity/connectivity.dart';
 
 class AllPage extends StatefulWidget {
   final String type;
@@ -31,26 +33,40 @@ class _AllPageState extends State<AllPage> {
 
   ScrollController _scrollController;
 
-  final Connectivity _connectivity = Connectivity();
   StreamSubscription<ConnectivityResult> _streamSubscription;
 
   double scrollDistance = 0.0;
 
+  bool isNoNet = false;
+  bool isError = false;
+  bool isLoading = false;
+
+  CancelToken _token = new CancelToken();
 
   @override
   void initState() {
     super.initState();
+
+    _streamSubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.none) {
+        isNoNet = true;
+      } else {
+        isNoNet = false;
+      }
+      setState(() {});
+    });
 
     _pageIdentifier = '${widget.type}_pageIdentifier';
     _dataIdentifier = '${widget.type}_dataIdentifier';
     _page =
         PageStorage.of(context).readState(context, identifier: _pageIdentifier);
     list.addAll(PageStorage
-        .of(context)
-        .readState(context, identifier: _dataIdentifier) ??
+            .of(context)
+            .readState(context, identifier: _dataIdentifier) ??
         []);
   }
-
 
   @override
   void didChangeDependencies() {
@@ -65,8 +81,9 @@ class _AllPageState extends State<AllPage> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_handleScroll);
-//    _streamSubscription.cancel();
+    _scrollController?.removeListener(_handleScroll);
+    _streamSubscription?.cancel();
+    _token?.cancel();
     super.dispose();
   }
 
@@ -76,21 +93,17 @@ class _AllPageState extends State<AllPage> {
       getData(false, widget.type);
     }
     scrollDistance = _scrollController.position.pixels;
-    setState(() {
-
-    });
+    setState(() {});
   }
 
   Widget _buildFloatActionButton() {
-    double screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    double screenHeight = MediaQuery.of(context).size.height;
     if (scrollDistance > screenHeight / 2) {
       return FloatingActionButton(
         onPressed: () {
-          _scrollController.animateTo(0.0, duration: Duration(
-              milliseconds: (scrollDistance / screenHeight).round() * 300),
+          _scrollController.animateTo(0.0,
+              duration: Duration(
+                  milliseconds: (scrollDistance / screenHeight).round() * 200),
               curve: Curves.easeOut);
         },
         tooltip: 'top',
@@ -107,38 +120,43 @@ class _AllPageState extends State<AllPage> {
     }
   }
 
+  Widget _buildRefreshContent() {
+    if (list.isEmpty) {
+      if (isNoNet) {
+        return NoNetworkView();
+      } else if (isError) {
+        return ErrorView();
+      } else {
+        getData(true, widget.type);
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+    } else {
+      return ListView.builder(
+          controller: _scrollController,
+          itemCount: list.length,
+          itemBuilder: (BuildContext context, int index) {
+            if (list.elementAt(index).type == '福利') {
+              return _buildImageItem(list.elementAt(index).url);
+            } else {
+              return _buildTextItem(list.elementAt(index));
+            }
+          });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (list.isEmpty) {
-      getData(true, widget.type);
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    } else {
       return new Scaffold(
         key: _globalKey,
         body: RefreshIndicator(
           key: _refreshIndicatorKey,
-          child: new ListView.builder(
-            controller: _scrollController,
-            itemCount: list.length,
-            itemBuilder: (BuildContext context, int index) {
-              if (list
-                  .elementAt(index)
-                  .type == '福利') {
-                return _buildImageItem(list
-                    .elementAt(index)
-                    .url);
-              } else {
-                return _buildTextItem(list.elementAt(index));
-              }
-            },
-          ),
+          child: _buildRefreshContent(),
           onRefresh: _handleRefresh,
         ),
         floatingActionButton: _buildFloatActionButton(),
       );
-    }
   }
 
   Future<Null> launcherUrl(String url) async {
@@ -150,6 +168,10 @@ class _AllPageState extends State<AllPage> {
   }
 
   Future<Null> getData(bool isClean, String type) async {
+    if (isNoNet) {
+      _globalKey.currentState.showSnackBar(SnackBar(content: Text('网络开小差了~~')));
+      return;
+    }
     if (isClean) {
       _page = 1;
     }
@@ -160,7 +182,12 @@ class _AllPageState extends State<AllPage> {
     } else {
       url = 'http://gank.io/api/data/$type/$pageSize/$_page';
     }
-    Response response = await dio.get(url);
+    Response response =
+        await dio.get(url, cancelToken: _token).catchError((DioError error) {
+      if (!CancelToken.isCancel(error)) {
+        isError = true;
+      }
+    });
 
 //    Map<String, dynamic> map = response.data
     GanHuos ganHuos = GanHuos.fromJson(response.data);

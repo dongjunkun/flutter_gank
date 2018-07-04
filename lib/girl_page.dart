@@ -29,6 +29,8 @@ class _GirlPageState extends State<GirlPage> {
 
   ScrollController _scrollController;
 
+  CancelToken _token = new CancelToken();
+
   @override
   void initState() {
     super.initState();
@@ -69,7 +71,8 @@ class _GirlPageState extends State<GirlPage> {
 
   @override
   void dispose() {
-    _scrollController.removeListener(_handleScroll);
+    _scrollController?.removeListener(_handleScroll);
+    _token?.cancel();
     super.dispose();
   }
 
@@ -120,7 +123,7 @@ class _GirlPageState extends State<GirlPage> {
     } else {
       url = 'http://gank.io/api/data/福利/$pageSize/$_page';
     }
-    Response response = await dio.get(url);
+    Response response = await dio.get(url,cancelToken: _token);
 
     GanHuos ganHuos = GanHuos.fromJson(response.data);
     _page++;
