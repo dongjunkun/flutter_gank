@@ -6,6 +6,8 @@ import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gank_app/options.dart';
 import 'package:gank_app/model/ganhuo.dart';
+import 'package:gank_app/common_view/error_view.dart';
+import 'package:gank_app/common_view/no_network_view.dart';
 
 class GirlPage extends StatefulWidget {
   bool random = false;
@@ -26,7 +28,7 @@ class _GirlPageState extends State<GirlPage> {
   String _dataIdentifier;
 
   int _page;
-
+  bool isError = false;
   ScrollController _scrollController;
 
   CancelToken _token = new CancelToken();
@@ -75,30 +77,39 @@ class _GirlPageState extends State<GirlPage> {
     _token?.cancel();
     super.dispose();
   }
-
+  Widget _buildRefreshContent() {
+    if (list.isEmpty) {
+      if (!networkEnable) {
+        return NoNetworkView();
+      } else if (isError) {
+        return ErrorView();
+      } else {
+        getData(true);
+        return Center(
+          child: CircularProgressIndicator(),
+        );
+      }
+    } else {
+      return StaggeredGridView.countBuilder(
+        controller: _scrollController,
+        padding: const EdgeInsets.all(1.0),
+        crossAxisCount: 2,
+        mainAxisSpacing: 1.0,
+        itemCount: list.length,
+        crossAxisSpacing: 1.0,
+        itemBuilder: (BuildContext context, int index) =>
+            _buildImageItem(list.elementAt(index)),
+        staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
+      );
+    }
+  }
   @override
   Widget build(BuildContext context) {
-    if (list.isEmpty) {
-      getData(true);
-      return Center(
-        child: CircularProgressIndicator(),
-      );
-    } else {
       return new Scaffold(
         key: _scaffoldKey,
         body: new RefreshIndicator(
           key: _refreshIndicatorKey,
-          child: StaggeredGridView.countBuilder(
-            controller: _scrollController,
-            padding: const EdgeInsets.all(1.0),
-            crossAxisCount: 2,
-            mainAxisSpacing: 1.0,
-            itemCount: list.length,
-            crossAxisSpacing: 1.0,
-            itemBuilder: (BuildContext context, int index) =>
-                _buildImageItem(list.elementAt(index)),
-            staggeredTileBuilder: (int index) => StaggeredTile.fit(1),
-          ),
+          child: _buildRefreshContent(),
           onRefresh: _handleRefresh,
         ),
         floatingActionButton: new FloatingActionButton(
@@ -109,10 +120,13 @@ class _GirlPageState extends State<GirlPage> {
           child: new Icon(Icons.refresh),
         ),
       );
-    }
   }
 
   Future<Null> getData(bool isClean) async {
+    if (!networkEnable) {
+      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('网络开小差了~~')));
+      return;
+    }
     if (isClean) {
       _page = 1;
     }

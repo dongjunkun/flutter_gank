@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:gank_app/gank_configuration.dart';
 import 'package:gank_app/home_page.dart';
 import 'package:gank_app/search_page.dart';
+import 'package:gank_app/options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:connectivity/connectivity.dart';
 
 void main() => runApp(new MyApp());
 
@@ -19,6 +21,8 @@ class _MyAppState extends State<MyApp> {
       platForm: PlatForm.android,
       themeType: ThemeType.light,
       random: false);
+
+  StreamSubscription<ConnectivityResult> _streamSubscription;
 
   void configurationUpdater(GankConfiguration value) {
     setState(() {
@@ -44,6 +48,23 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _loadConfig();
+    _streamSubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult result) {
+      if (result == ConnectivityResult.none) {
+        networkEnable = false;
+      } else {
+        networkEnable = true;
+      }
+      setState(() {});
+    });
+
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription?.cancel();
+    super.dispose();
   }
 
   Future<Null> _loadConfig() async {

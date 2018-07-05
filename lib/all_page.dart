@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:connectivity/connectivity.dart';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
@@ -33,11 +33,8 @@ class _AllPageState extends State<AllPage> {
 
   ScrollController _scrollController;
 
-  StreamSubscription<ConnectivityResult> _streamSubscription;
-
   double scrollDistance = 0.0;
 
-  bool isNoNet = false;
   bool isError = false;
   bool isLoading = false;
 
@@ -46,17 +43,6 @@ class _AllPageState extends State<AllPage> {
   @override
   void initState() {
     super.initState();
-
-    _streamSubscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult result) {
-      if (result == ConnectivityResult.none) {
-        isNoNet = true;
-      } else {
-        isNoNet = false;
-      }
-      setState(() {});
-    });
 
     _pageIdentifier = '${widget.type}_pageIdentifier';
     _dataIdentifier = '${widget.type}_dataIdentifier';
@@ -82,7 +68,6 @@ class _AllPageState extends State<AllPage> {
   @override
   void dispose() {
     _scrollController?.removeListener(_handleScroll);
-    _streamSubscription?.cancel();
     _token?.cancel();
     super.dispose();
   }
@@ -122,7 +107,7 @@ class _AllPageState extends State<AllPage> {
 
   Widget _buildRefreshContent() {
     if (list.isEmpty) {
-      if (isNoNet) {
+      if (!networkEnable) {
         return NoNetworkView();
       } else if (isError) {
         return ErrorView();
@@ -168,7 +153,7 @@ class _AllPageState extends State<AllPage> {
   }
 
   Future<Null> getData(bool isClean, String type) async {
-    if (isNoNet) {
+    if (!networkEnable) {
       _globalKey.currentState.showSnackBar(SnackBar(content: Text('网络开小差了~~')));
       return;
     }

@@ -29,9 +29,9 @@ class _SearchPageState extends State<SearchPage> {
 //              color: Colors.white.withAlpha(100)
 //            )
           ),
-          style: TextStyle(
-            color: Colors.white
-          ),
+//          style: TextStyle(
+//            color: Colors.white
+//          ),
           onChanged: (text){
             print(text);
           },
