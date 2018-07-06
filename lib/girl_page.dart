@@ -33,6 +33,8 @@ class _GirlPageState extends State<GirlPage> {
 
   CancelToken _token = new CancelToken();
 
+  double scrollDistance = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -60,6 +62,8 @@ class _GirlPageState extends State<GirlPage> {
         _scrollController.position.maxScrollExtent) {
       getData(false);
     }
+    scrollDistance = _scrollController.position.pixels;
+    setState(() {});
   }
 
   Future<Null> _handleRefresh() {
@@ -77,6 +81,31 @@ class _GirlPageState extends State<GirlPage> {
     _token?.cancel();
     super.dispose();
   }
+
+  Widget _buildFloatActionButton() {
+    double screenHeight = MediaQuery.of(context).size.height;
+    if (scrollDistance > screenHeight / 2) {
+      return FloatingActionButton(
+        onPressed: () {
+          _scrollController.animateTo(0.0,
+              duration: Duration(
+                  milliseconds: 300),
+              curve: Curves.easeOut);
+        },
+        tooltip: 'top',
+        child: new Icon(Icons.arrow_upward),
+      );
+    } else {
+      return FloatingActionButton(
+        onPressed: () {
+          _refreshIndicatorKey.currentState.show();
+        },
+        tooltip: 'refresh',
+        child: new Icon(Icons.refresh),
+      );
+    }
+  }
+
   Widget _buildRefreshContent() {
     if (list.isEmpty) {
       if (!networkEnable) {
@@ -112,13 +141,7 @@ class _GirlPageState extends State<GirlPage> {
           child: _buildRefreshContent(),
           onRefresh: _handleRefresh,
         ),
-        floatingActionButton: new FloatingActionButton(
-          onPressed: () {
-            _refreshIndicatorKey.currentState.show();
-          },
-          tooltip: 'refresh',
-          child: new Icon(Icons.refresh),
-        ),
+        floatingActionButton: _buildFloatActionButton(),
       );
   }
 

@@ -88,7 +88,7 @@ class _AllPageState extends State<AllPage> {
         onPressed: () {
           _scrollController.animateTo(0.0,
               duration: Duration(
-                  milliseconds: (scrollDistance / screenHeight).round() * 200),
+                  milliseconds: 300),
               curve: Curves.easeOut);
         },
         tooltip: 'top',
