@@ -4,10 +4,10 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
-import 'package:gank_app/options.dart';
-import 'package:gank_app/model/ganhuo.dart';
 import 'package:gank_app/common_view/error_view.dart';
 import 'package:gank_app/common_view/no_network_view.dart';
+import 'package:gank_app/model/ganhuo.dart';
+import 'package:gank_app/options.dart';
 
 class GirlPage extends StatefulWidget {
   bool random = false;
@@ -19,14 +19,14 @@ class GirlPage extends StatefulWidget {
 }
 
 class _GirlPageState extends State<GirlPage> {
-  List<GanHuo> list =[];
+  List<GanHuo> list = [];
 
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey();
   GlobalKey<RefreshIndicatorState> _refreshIndicatorKey = GlobalKey();
 
   String _pageIdentifier;
   String _dataIdentifier;
-  String _scrollDistanceIdentifier ;
+  String _scrollDistanceIdentifier;
 
   int _page;
   bool isError = false;
@@ -46,7 +46,10 @@ class _GirlPageState extends State<GirlPage> {
             .of(context)
             .readState(context, identifier: _pageIdentifier) ??
         1;
-    scrollDistance = PageStorage.of(context).readState(context,identifier: _scrollDistanceIdentifier)??0.0;
+    scrollDistance = PageStorage
+            .of(context)
+            .readState(context, identifier: _scrollDistanceIdentifier) ??
+        0.0;
 
     list.addAll(PageStorage
             .of(context)
@@ -68,7 +71,8 @@ class _GirlPageState extends State<GirlPage> {
       getData(false);
     }
     scrollDistance = _scrollController.position.pixels;
-    PageStorage.of(context).writeState(context, scrollDistance,identifier: _scrollDistanceIdentifier);
+    PageStorage.of(context).writeState(context, scrollDistance,
+        identifier: _scrollDistanceIdentifier);
     setState(() {});
   }
 
@@ -94,9 +98,7 @@ class _GirlPageState extends State<GirlPage> {
       return FloatingActionButton(
         onPressed: () {
           _scrollController.animateTo(0.0,
-              duration: Duration(
-                  milliseconds: 300),
-              curve: Curves.easeOut);
+              duration: Duration(milliseconds: 300), curve: Curves.easeOut);
         },
         tooltip: 'top',
         child: new Icon(Icons.arrow_upward),
@@ -128,7 +130,8 @@ class _GirlPageState extends State<GirlPage> {
       return StaggeredGridView.countBuilder(
         controller: _scrollController,
         padding: const EdgeInsets.all(1.0),
-        crossAxisCount: 2,
+        crossAxisCount:
+            MediaQuery.of(context).orientation == Orientation.portrait ? 2 : 4,
         mainAxisSpacing: 1.0,
         itemCount: list.length,
         crossAxisSpacing: 1.0,
@@ -138,22 +141,24 @@ class _GirlPageState extends State<GirlPage> {
       );
     }
   }
+
   @override
   Widget build(BuildContext context) {
-      return new Scaffold(
-        key: _scaffoldKey,
-        body: new RefreshIndicator(
-          key: _refreshIndicatorKey,
-          child: _buildRefreshContent(),
-          onRefresh: _handleRefresh,
-        ),
-        floatingActionButton: _buildFloatActionButton(),
-      );
+    return new Scaffold(
+      key: _scaffoldKey,
+      body: new RefreshIndicator(
+        key: _refreshIndicatorKey,
+        child: _buildRefreshContent(),
+        onRefresh: _handleRefresh,
+      ),
+      floatingActionButton: _buildFloatActionButton(),
+    );
   }
 
   Future<Null> getData(bool isClean) async {
     if (!networkEnable) {
-      _scaffoldKey.currentState.showSnackBar(SnackBar(content: Text('网络开小差了~~')));
+      _scaffoldKey.currentState
+          .showSnackBar(SnackBar(content: Text('网络开小差了~~')));
       return;
     }
     if (isClean) {
@@ -166,7 +171,7 @@ class _GirlPageState extends State<GirlPage> {
     } else {
       url = 'http://gank.io/api/data/福利/$pageSize/$_page';
     }
-    Response response = await dio.get(url,cancelToken: _token);
+    Response response = await dio.get(url, cancelToken: _token);
 
     GanHuos ganHuos = GanHuos.fromJson(response.data);
     _page++;
@@ -191,8 +196,7 @@ class _GirlPageState extends State<GirlPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) =>
-              new ImagePreViewWidget(url: ganHuo.url),
+              builder: (context) => new ImagePreViewWidget(url: ganHuo.url),
             ));
       },
       child: new Hero(
