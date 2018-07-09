@@ -26,6 +26,7 @@ class _GirlPageState extends State<GirlPage> {
 
   String _pageIdentifier;
   String _dataIdentifier;
+  String _scrollDistanceIdentifier ;
 
   int _page;
   bool isError = false;
@@ -40,10 +41,13 @@ class _GirlPageState extends State<GirlPage> {
     super.initState();
     _pageIdentifier = '福利_pageIdentifier';
     _dataIdentifier = '福利_dataIdentifier';
+    _scrollDistanceIdentifier = 'scrollDistanceIndentifier';
     _page = PageStorage
             .of(context)
             .readState(context, identifier: _pageIdentifier) ??
         1;
+    scrollDistance = PageStorage.of(context).readState(context,identifier: _scrollDistanceIdentifier)??0.0;
+
     list.addAll(PageStorage
             .of(context)
             .readState(context, identifier: _dataIdentifier) ??
@@ -54,6 +58,7 @@ class _GirlPageState extends State<GirlPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _scrollController = ScrollController();
+
     _scrollController.addListener(_handleScroll);
   }
 
@@ -63,6 +68,7 @@ class _GirlPageState extends State<GirlPage> {
       getData(false);
     }
     scrollDistance = _scrollController.position.pixels;
+    PageStorage.of(context).writeState(context, scrollDistance,identifier: _scrollDistanceIdentifier);
     setState(() {});
   }
 

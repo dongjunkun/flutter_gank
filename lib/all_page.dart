@@ -28,6 +28,7 @@ class _AllPageState extends State<AllPage> {
 
   String _pageIdentifier;
   String _dataIdentifier;
+  String _scrollDistanceIdentifier ;
 
   int _page;
 
@@ -46,6 +47,9 @@ class _AllPageState extends State<AllPage> {
 
     _pageIdentifier = '${widget.type}_pageIdentifier';
     _dataIdentifier = '${widget.type}_dataIdentifier';
+    _scrollDistanceIdentifier = '${widget.type}_scrollDistanceIndentifier';
+    scrollDistance = PageStorage.of(context).readState(context,identifier: _scrollDistanceIdentifier)??0.0;
+
     _page =
         PageStorage.of(context).readState(context, identifier: _pageIdentifier);
     list.addAll(PageStorage
@@ -78,6 +82,7 @@ class _AllPageState extends State<AllPage> {
       getData(false, widget.type);
     }
     scrollDistance = _scrollController.position.pixels;
+    PageStorage.of(context).writeState(context, scrollDistance,identifier: _scrollDistanceIdentifier);
     setState(() {});
   }
 

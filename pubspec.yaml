@@ -15,6 +15,7 @@ dependencies:
   url_launcher: ^3.0.2
   connectivity: ^0.3.1
   shared_preferences: ^0.4.2
+#  flutter_stetho: "^0.1.1"
 #  json_annotation: ^0.2.8
 
 dev_dependencies:
