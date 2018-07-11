@@ -1,6 +1,7 @@
 import 'dart:async';
 
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
@@ -284,9 +285,10 @@ class _AllPageState extends State<AllPage> {
           child: new Hero(
             tag: url,
 //          child: Image.network(ganHuo['url'])
-            child: Image(
-              image: AdvancedNetworkImage(url),
-            ),
+//            child: Image(
+//              image: AdvancedNetworkImage(url),
+//            ),
+            child: CachedNetworkImage(imageUrl: url),
           ),
         ),
       ),
@@ -312,8 +314,10 @@ class ImagePreViewWidget extends StatelessWidget {
                 },
                 child: Hero(
                     tag: url,
-                    child: Image(
-                      image: AdvancedNetworkImage(url),
-                    )))));
+//                    child: Image(
+//                      image: AdvancedNetworkImage(url),
+//                    )
+                  child: CachedNetworkImage(imageUrl: url),
+                ))));
   }
 }

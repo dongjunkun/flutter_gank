@@ -8,6 +8,7 @@ import 'package:gank_app/common_view/error_view.dart';
 import 'package:gank_app/common_view/no_network_view.dart';
 import 'package:gank_app/model/ganhuo.dart';
 import 'package:gank_app/options.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class GirlPage extends StatefulWidget {
   bool random = false;
@@ -202,9 +203,10 @@ class _GirlPageState extends State<GirlPage> {
       child: new Hero(
         tag: ganHuo.url,
 //          child: Image.network(ganHuo['url'])
-        child: Image(
-          image: AdvancedNetworkImage(ganHuo.url),
-        ),
+//        child: Image(
+//          image: AdvancedNetworkImage(ganHuo.url),
+//        ),
+      child: CachedNetworkImage(imageUrl: ganHuo.url),
       ),
     );
   }
@@ -228,8 +230,10 @@ class ImagePreViewWidget extends StatelessWidget {
                 },
                 child: Hero(
                     tag: url,
-                    child: Image(
-                      image: AdvancedNetworkImage(url),
-                    )))));
+//                    child: Image(
+//                      image: AdvancedNetworkImage(url),
+//                    )
+                  child: CachedNetworkImage(imageUrl:url),
+                ))));
   }
 }
