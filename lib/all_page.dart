@@ -213,7 +213,7 @@ class _AllPageState extends State<AllPage> {
   }
 
   Widget _buildTextItem(GanHuo ganHuo) {
-//    List<dynamic> urls = ganHuo['images'];
+//    List<dynamic> urls = ganHuo.images;
 //
 //    if (urls != null && urls.length > 0) {
 //      return new Column(
@@ -221,11 +221,11 @@ class _AllPageState extends State<AllPage> {
 //          new InkWell(
 //            onTap: () {
 //              _globalKey.currentState.showSnackBar(
-//                  SnackBar(content: Text(ganHuo['desc'])));
+//                  SnackBar(content: Text(ganHuo.desc)));
 //            },
 //            child: new ListTile(
 //              title: Text(
-//                ganHuo['desc'],
+//                ganHuo.desc,
 //                textAlign: TextAlign.justify,
 //                style: TextStyle(decoration: TextDecoration.none),
 //              ),
