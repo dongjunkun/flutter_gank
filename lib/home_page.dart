@@ -6,6 +6,7 @@ import 'package:gank_app/all_page.dart';
 import 'package:gank_app/gank_configuration.dart';
 import 'package:gank_app/girl_page.dart';
 import 'package:gank_app/search_page.dart';
+import 'package:gank_app/reorder_and_switch_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -28,7 +29,7 @@ class _HomePageState extends State<HomePage>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(initialIndex: 0,length: 9, vsync: this);
+    tabController = TabController(initialIndex: 0, length: 9, vsync: this);
   }
 
   Future<Null> _handleThemeChange(ThemeType value) async {
@@ -97,16 +98,42 @@ class _HomePageState extends State<HomePage>
               ),
             ),
             body: TabBarView(controller: tabController, children: <Widget>[
-              AllPage(key:PageStorageKey<String>('all'),type: 'all',random: widget.configuration.random),
+              AllPage(
+                  key: PageStorageKey<String>('all'),
+                  type: 'all',
+                  random: widget.configuration.random),
 //            RecommendPage(),
-              GirlPage(key:PageStorageKey<String>('girl'),random: widget.configuration.random),
-              AllPage(key:PageStorageKey<String>('Android'),type: 'Android',random: widget.configuration.random),
-              AllPage(key:PageStorageKey<String>('iOS'),type: 'iOS',random: widget.configuration.random),
-              AllPage(key:PageStorageKey<String>('休息视频'),type: '休息视频',random: widget.configuration.random),
-              AllPage(key:PageStorageKey<String>('前端'),type: '前端',random: widget.configuration.random),
-              AllPage(key:PageStorageKey<String>('拓展资源'),type: '拓展资源',random: widget.configuration.random),
-              AllPage(key:PageStorageKey<String>('App'),type: 'App',random: widget.configuration.random),
-              AllPage(key:PageStorageKey<String>('瞎推荐'),type: '瞎推荐',random: widget.configuration.random),
+              GirlPage(
+                  key: PageStorageKey<String>('girl'),
+                  random: widget.configuration.random),
+              AllPage(
+                  key: PageStorageKey<String>('Android'),
+                  type: 'Android',
+                  random: widget.configuration.random),
+              AllPage(
+                  key: PageStorageKey<String>('iOS'),
+                  type: 'iOS',
+                  random: widget.configuration.random),
+              AllPage(
+                  key: PageStorageKey<String>('休息视频'),
+                  type: '休息视频',
+                  random: widget.configuration.random),
+              AllPage(
+                  key: PageStorageKey<String>('前端'),
+                  type: '前端',
+                  random: widget.configuration.random),
+              AllPage(
+                  key: PageStorageKey<String>('拓展资源'),
+                  type: '拓展资源',
+                  random: widget.configuration.random),
+              AllPage(
+                  key: PageStorageKey<String>('App'),
+                  type: 'App',
+                  random: widget.configuration.random),
+              AllPage(
+                  key: PageStorageKey<String>('瞎推荐'),
+                  type: '瞎推荐',
+                  random: widget.configuration.random),
             ]),
             drawer: Drawer(
                 child: ListView(
@@ -151,28 +178,6 @@ class _HomePageState extends State<HomePage>
                   },
                 ),
                 ListTile(
-                  title: Text('Pink'),
-                  trailing: Radio<ThemeType>(
-                    value: ThemeType.pink,
-                    groupValue: widget.configuration.themeType,
-                    onChanged: _handleThemeChange,
-                  ),
-                  onTap: () {
-                    _handleThemeChange(ThemeType.pink);
-                  },
-                ),
-                ListTile(
-                  title: Text('Teal'),
-                  trailing: Radio<ThemeType>(
-                    value: ThemeType.teal,
-                    groupValue: widget.configuration.themeType,
-                    onChanged: _handleThemeChange,
-                  ),
-                  onTap: () {
-                    _handleThemeChange(ThemeType.teal);
-                  },
-                ),
-                ListTile(
                   title: Text('Blue'),
                   trailing: Radio<ThemeType>(
                     value: ThemeType.blue,
@@ -213,6 +218,12 @@ class _HomePageState extends State<HomePage>
                     onChanged: (bool value) {
                       _handleRandomChange(value);
                     }),
+                ListTile(
+                  title: Text('模块排序及开关'),
+                  onTap: () {
+                    Navigator.pushNamed(context, ReorderAndSwitchPage.realName);
+                  },
+                ),
               ],
             ))),
         onWillPop: () {
@@ -229,6 +240,7 @@ class _HomePageState extends State<HomePage>
               SystemNavigator.pop();
             }
           }
+          return null;
         });
   }
 }

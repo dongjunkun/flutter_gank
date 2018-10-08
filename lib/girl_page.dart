@@ -2,13 +2,12 @@ import 'dart:async';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_advanced_networkimage/flutter_advanced_networkimage.dart';
-import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:gank_app/common_view/error_view.dart';
 import 'package:gank_app/common_view/no_network_view.dart';
 import 'package:gank_app/model/ganhuo.dart';
 import 'package:gank_app/options.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 
 class GirlPage extends StatefulWidget {
   bool random = false;

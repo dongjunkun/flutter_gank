@@ -8,6 +8,7 @@ import 'package:gank_app/search_page.dart';
 import 'package:gank_app/options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:gank_app/reorder_and_switch_page.dart';
 
 void main() => runApp(new MyApp());
 
@@ -32,14 +33,15 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    MaterialPageRoute.debugEnableFadingRoutes = true;
+//    MaterialPageRoute.debugEnableFadingRoutes = true;
     return MaterialApp(
       title: '干货集中营',
       theme: theme,
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(_configuration, configurationUpdater),
-        '/search': (context) => SearchPage()
+        '/search': (context) => SearchPage(),
+        '/reorderAndSwitch': (context) => ReorderAndSwitchPage()
       },
     );
   }
@@ -73,6 +75,7 @@ class _MyAppState extends State<MyApp> {
         ThemeType.values.elementAt(prefs.getInt('theme') ?? 0);
     PlatForm platForm =
         PlatForm.values.elementAt(prefs.getInt('platform') ?? 0);
+
     bool random = prefs.getBool('random' ?? false);
     configurationUpdater(_configuration.copyWith(
         themeType: themeType, platForm: platForm, random: random));
@@ -108,19 +111,6 @@ class _MyAppState extends State<MyApp> {
         return ThemeData(
           brightness: Brightness.dark,
           accentColor: Colors.red,
-          platform: platform,
-        );
-      case ThemeType.pink:
-        return ThemeData(
-          primarySwatch: Colors.pink,
-          brightness: Brightness.light,
-          indicatorColor:Colors.white,
-          platform: platform,
-        );
-      case ThemeType.teal:
-        return ThemeData(
-          primarySwatch: Colors.teal,
-          indicatorColor:Colors.white,
           platform: platform,
         );
       case ThemeType.blue:
