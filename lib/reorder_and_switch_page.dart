@@ -45,12 +45,14 @@ class _ReorderAndSwitchPageState extends State<ReorderAndSwitchPage> {
     return CheckboxListTile(
       key: Key(item.value) ,
       value: item.checkState ?? false,
+
       onChanged: (bool newValue) {
         setState(() {
           item.checkState = newValue;
         });
       },
       title: Text(item.value),
+      secondary: Icon(Icons.drag_handle),
     );
   }
 }
