@@ -79,6 +79,7 @@ class _MyAppState extends State<MyApp> {
     bool random = prefs.getBool('random' ?? false);
     configurationUpdater(_configuration.copyWith(
         themeType: themeType, platForm: platForm, random: random));
+
   }
 
   TargetPlatform get platform {

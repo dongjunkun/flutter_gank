@@ -1,12 +1,15 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gank_app/all_page.dart';
 import 'package:gank_app/gank_configuration.dart';
 import 'package:gank_app/girl_page.dart';
-import 'package:gank_app/search_page.dart';
+import 'package:gank_app/model/app_model.dart';
+import 'package:gank_app/options.dart';
 import 'package:gank_app/reorder_and_switch_page.dart';
+import 'package:gank_app/search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
@@ -26,10 +29,27 @@ class _HomePageState extends State<HomePage>
   TabController tabController;
   int lastTime = 0;
 
+  List<AppModel> appModels = [];
+
   @override
   void initState() {
     super.initState();
+    _loadAppModel();
     tabController = TabController(initialIndex: 0, length: 9, vsync: this);
+  }
+
+  Future<Null> _loadAppModel() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String json = prefs.getString("appModels") ?? null;
+    List<AppModel> allAppModel;
+    if (json == null) {
+      allAppModel = getDefaultAppModels();
+    } else {
+      allAppModel = jsonDecode(json);
+    }
+    allAppModel.forEach((appModel) {
+      if (appModel.enable == true) appModels.add(appModel);
+    });
   }
 
   Future<Null> _handleThemeChange(ThemeType value) async {
@@ -83,58 +103,75 @@ class _HomePageState extends State<HomePage>
                 controller: tabController,
                 isScrollable: true,
                 indicatorSize: TabBarIndicatorSize.label,
-                tabs: <Widget>[
-                  Tab(text: '全部'),
-//                Tab(text: '推荐'),
-                  Tab(text: '妹纸图'),
-                  Tab(text: 'Android'),
-                  Tab(text: 'iOS'),
-                  Tab(text: '休息视频'),
-                  Tab(text: '前端'),
-                  Tab(text: '拓展资源'),
-                  Tab(text: 'App'),
-                  Tab(text: '瞎推荐'),
-                ],
+                tabs: appModels.map((AppModel appModel) {
+                  return Tab(text: appModel.nameCn);
+                }).toList(),
+//                tabs: <Widget>[
+//                  Tab(text: '全部'),
+////                Tab(text: '推荐'),
+//                  Tab(text: '妹纸图'),
+//                  Tab(text: 'Android'),
+//                  Tab(text: 'iOS'),
+//                  Tab(text: '休息视频'),
+//                  Tab(text: '前端'),
+//                  Tab(text: '拓展资源'),
+//                  Tab(text: 'App'),
+//                  Tab(text: '瞎推荐'),
+//                ],
               ),
             ),
-            body: TabBarView(controller: tabController, children: <Widget>[
-              AllPage(
-                  key: PageStorageKey<String>('all'),
-                  type: 'all',
-                  random: widget.configuration.random),
-//            RecommendPage(),
-              GirlPage(
-                  key: PageStorageKey<String>('girl'),
-                  random: widget.configuration.random),
-              AllPage(
-                  key: PageStorageKey<String>('Android'),
-                  type: 'Android',
-                  random: widget.configuration.random),
-              AllPage(
-                  key: PageStorageKey<String>('iOS'),
-                  type: 'iOS',
-                  random: widget.configuration.random),
-              AllPage(
-                  key: PageStorageKey<String>('休息视频'),
-                  type: '休息视频',
-                  random: widget.configuration.random),
-              AllPage(
-                  key: PageStorageKey<String>('前端'),
-                  type: '前端',
-                  random: widget.configuration.random),
-              AllPage(
-                  key: PageStorageKey<String>('拓展资源'),
-                  type: '拓展资源',
-                  random: widget.configuration.random),
-              AllPage(
-                  key: PageStorageKey<String>('App'),
-                  type: 'App',
-                  random: widget.configuration.random),
-              AllPage(
-                  key: PageStorageKey<String>('瞎推荐'),
-                  type: '瞎推荐',
-                  random: widget.configuration.random),
-            ]),
+            body: TabBarView(
+                controller: tabController,
+                children: appModels.map((AppModel appModel) {
+                  if (appModel.nameEn == "girl") {
+                    return GirlPage(
+                        key: PageStorageKey<String>('girl'),
+                        random: widget.configuration.random);
+                  } else {
+                    return AllPage(
+                        key: PageStorageKey<String>(appModel.nameEn),
+                        type: appModel.nameEn,
+                        random: widget.configuration.random);
+                  }
+                }).toList()),
+//            body: TabBarView(controller: tabController, children: <Widget>[
+//              AllPage(
+//                  key: PageStorageKey<String>('all'),
+//                  type: 'all',
+//                  random: widget.configuration.random),
+////            RecommendPage(),
+//              GirlPage(
+//                  key: PageStorageKey<String>('girl'),
+//                  random: widget.configuration.random),
+//              AllPage(
+//                  key: PageStorageKey<String>('Android'),
+//                  type: 'Android',
+//                  random: widget.configuration.random),
+//              AllPage(
+//                  key: PageStorageKey<String>('iOS'),
+//                  type: 'iOS',
+//                  random: widget.configuration.random),
+//              AllPage(
+//                  key: PageStorageKey<String>('休息视频'),
+//                  type: '休息视频',
+//                  random: widget.configuration.random),
+//              AllPage(
+//                  key: PageStorageKey<String>('前端'),
+//                  type: '前端',
+//                  random: widget.configuration.random),
+//              AllPage(
+//                  key: PageStorageKey<String>('拓展资源'),
+//                  type: '拓展资源',
+//                  random: widget.configuration.random),
+//              AllPage(
+//                  key: PageStorageKey<String>('App'),
+//                  type: 'App',
+//                  random: widget.configuration.random),
+//              AllPage(
+//                  key: PageStorageKey<String>('瞎推荐'),
+//                  type: '瞎推荐',
+//                  random: widget.configuration.random),
+//            ]),
             drawer: Drawer(
                 child: ListView(
               children: <Widget>[

@@ -1,4 +1,9 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:gank_app/model/app_model.dart';
+import 'package:gank_app/options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ReorderAndSwitchPage extends StatefulWidget {
   static const realName = "/reorderAndSwitch";
@@ -8,17 +13,28 @@ class ReorderAndSwitchPage extends StatefulWidget {
 }
 
 class _ReorderAndSwitchPageState extends State<ReorderAndSwitchPage> {
-  final List<_ListItem> _items = <String>[
-    '全部',
-    '妹纸图',
-    'Android',
-    'iOS',
-    '休息视频',
-    '前端',
-    '拓展资源',
-    'App',
-    '瞎推荐'
-  ].map((String item) => new _ListItem(item, true)).toList();
+
+  List<AppModel> allAppModel = [];
+
+  @override
+  void initState() {
+    _loadAppModel();
+    super.initState();
+  }
+
+  Future<Null> _loadAppModel() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String json = prefs.getString("appModels") ?? null;
+
+    if (json == null) {
+      allAppModel = getDefaultAppModels();
+    } else {
+      allAppModel = jsonDecode(json);
+    }
+    setState(() {
+
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +42,7 @@ class _ReorderAndSwitchPageState extends State<ReorderAndSwitchPage> {
       appBar: AppBar(
         title: Text('模块排序及开关'),
       ),
-      body: ReorderableListView(children: _items.map(buildListTile).toList(), onReorder: _onReorder),
+      body: ReorderableListView(children: allAppModel.map(buildListTile).toList(), onReorder: _onReorder),
     );
   }
 
@@ -36,22 +52,22 @@ class _ReorderAndSwitchPageState extends State<ReorderAndSwitchPage> {
       if(newIndex > oldIndex){
         newIndex -= 1;
       }
-      final _ListItem item = _items.removeAt(oldIndex);
-      _items.insert(newIndex, item);
+      final AppModel item = allAppModel.removeAt(oldIndex);
+      allAppModel.insert(newIndex, item);
     });
   }
 
-  Widget buildListTile(_ListItem item) {
+  Widget buildListTile(AppModel item) {
     return CheckboxListTile(
-      key: Key(item.value) ,
-      value: item.checkState ?? false,
+      key: Key(item.nameEn) ,
+      value: item.enable ?? false,
 
       onChanged: (bool newValue) {
         setState(() {
-          item.checkState = newValue;
+          item.enable = newValue;
         });
       },
-      title: Text(item.value),
+      title: Text(item.nameCn),
       secondary: Icon(Icons.drag_handle),
     );
   }
