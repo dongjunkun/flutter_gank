@@ -1,14 +1,14 @@
 import 'dart:async';
 
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gank_app/gank_configuration.dart';
 import 'package:gank_app/home_page.dart';
-import 'package:gank_app/search_page.dart';
 import 'package:gank_app/options.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:gank_app/reorder_and_switch_page.dart';
+import 'package:gank_app/search_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(new MyApp());
 
@@ -19,9 +19,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   GankConfiguration _configuration = GankConfiguration(
-      platForm: PlatForm.android,
-      themeType: ThemeType.light,
-      random: false);
+      platForm: PlatForm.android, themeType: ThemeType.light, random: false);
 
   StreamSubscription<ConnectivityResult> _streamSubscription;
 
@@ -33,10 +31,11 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-//    MaterialPageRoute.debugEnableFadingRoutes = true;
+
     return MaterialApp(
       title: '干货集中营',
       theme: theme,
+      debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
         '/': (context) => HomePage(_configuration, configurationUpdater),
@@ -60,7 +59,6 @@ class _MyAppState extends State<MyApp> {
       }
       setState(() {});
     });
-
   }
 
   @override
@@ -79,7 +77,6 @@ class _MyAppState extends State<MyApp> {
     bool random = prefs.getBool('random' ?? false);
     configurationUpdater(_configuration.copyWith(
         themeType: themeType, platForm: platForm, random: random));
-
   }
 
   TargetPlatform get platform {
@@ -99,7 +96,7 @@ class _MyAppState extends State<MyApp> {
         return ThemeData(
           primarySwatch: Colors.brown,
           brightness: Brightness.light,
-          indicatorColor:Colors.white,
+          indicatorColor: Colors.white,
           platform: platform,
         );
       case ThemeType.light:
@@ -116,7 +113,7 @@ class _MyAppState extends State<MyApp> {
         );
       case ThemeType.blue:
         return ThemeData(
-          indicatorColor:Colors.white,
+          indicatorColor: Colors.white,
           primarySwatch: Colors.blue,
           platform: platform,
         );

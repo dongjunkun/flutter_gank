@@ -212,42 +212,42 @@ class _AllPageState extends State<AllPage> {
   }
 
   Widget _buildTextItem(GanHuo ganHuo) {
-//    List<dynamic> urls = ganHuo.images;
-//
-//    if (urls != null && urls.length > 0) {
-//      return new Column(
-//        children: <Widget>[
-//          new InkWell(
-//            onTap: () {
-//              _globalKey.currentState.showSnackBar(
-//                  SnackBar(content: Text(ganHuo.desc)));
-//            },
-//            child: new ListTile(
-//              title: Text(
-//                ganHuo.desc,
-//                textAlign: TextAlign.justify,
-//                style: TextStyle(decoration: TextDecoration.none),
-//              ),
-//            ),
-//          ),
-//          new SizedBox.fromSize(
-//            size: Size.fromHeight(200.0),
-//            child: new ListView.builder(
-//              scrollDirection: Axis.horizontal,
-//              itemCount: urls.length,
-//              shrinkWrap: false,
-//              padding: const EdgeInsets.only(left: 8.0,right: 8.0),
-//              itemBuilder: (context, index) {
-//               return _buildImageItem(urls.elementAt(index));
-////                new Container(
-////                    color: Colors.red,
-////                    child: new Text('aaaaaaaaaaaaaaaa'));
-//              },
-//            ),
-//          ),
-//        ],
-//      );
-//    } else {
+    List<dynamic> urls = ganHuo.images;
+
+   /* if (urls != null && urls.length > 0) {
+      return new Column(
+        children: <Widget>[
+          new InkWell(
+            onTap: () {
+              _globalKey.currentState.showSnackBar(
+                  SnackBar(content: Text(ganHuo.desc)));
+            },
+            child: new ListTile(
+              title: Text(
+                ganHuo.desc,
+                textAlign: TextAlign.justify,
+                style: TextStyle(decoration: TextDecoration.none),
+              ),
+            ),
+          ),
+          new SizedBox.fromSize(
+            size: Size.fromHeight(200.0),
+            child: new ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: urls.length,
+              shrinkWrap: true,
+              padding: const EdgeInsets.only(left: 8.0,right: 8.0),
+              itemBuilder: (context, index) {
+               return _buildWrapImageItem(urls.elementAt(index));
+//                new Container(
+//                    color: Colors.red,
+//                    child: new Text('aaaaaaaaaaaaaaaa'));
+              },
+            ),
+          ),
+        ],
+      );
+    } else {*/
     return new InkWell(
       onTap: () {
 //        _globalKey.currentState
@@ -272,6 +272,31 @@ class _AllPageState extends State<AllPage> {
   Widget _buildImageItem(String url) {
     return Padding(
       padding: const EdgeInsets.only(left: 12.0, right: 100.0),
+      child: new GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => new ImagePreViewWidget(url: url),
+              ));
+        },
+        child: new Card(
+          child: new Hero(
+            tag: url,
+//          child: Image.network(ganHuo['url'])
+//            child: Image(
+//              image: AdvancedNetworkImage(url),
+//            ),
+            child: CachedNetworkImage(imageUrl: url),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWrapImageItem(String url) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 0.0,horizontal: 5.0),
       child: new GestureDetector(
         onTap: () {
           Navigator.push(

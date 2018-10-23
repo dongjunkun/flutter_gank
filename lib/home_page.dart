@@ -102,22 +102,11 @@ class _HomePageState extends State<HomePage>
               bottom: TabBar(
                 controller: tabController,
                 isScrollable: true,
+                labelPadding: EdgeInsets.only(left: 14.0,right: 14.0),
                 indicatorSize: TabBarIndicatorSize.label,
                 tabs: appModels.map((AppModel appModel) {
                   return Tab(text: appModel.nameCn);
                 }).toList(),
-//                tabs: <Widget>[
-//                  Tab(text: '全部'),
-////                Tab(text: '推荐'),
-//                  Tab(text: '妹纸图'),
-//                  Tab(text: 'Android'),
-//                  Tab(text: 'iOS'),
-//                  Tab(text: '休息视频'),
-//                  Tab(text: '前端'),
-//                  Tab(text: '拓展资源'),
-//                  Tab(text: 'App'),
-//                  Tab(text: '瞎推荐'),
-//                ],
               ),
             ),
             body: TabBarView(
@@ -134,44 +123,6 @@ class _HomePageState extends State<HomePage>
                         random: widget.configuration.random);
                   }
                 }).toList()),
-//            body: TabBarView(controller: tabController, children: <Widget>[
-//              AllPage(
-//                  key: PageStorageKey<String>('all'),
-//                  type: 'all',
-//                  random: widget.configuration.random),
-////            RecommendPage(),
-//              GirlPage(
-//                  key: PageStorageKey<String>('girl'),
-//                  random: widget.configuration.random),
-//              AllPage(
-//                  key: PageStorageKey<String>('Android'),
-//                  type: 'Android',
-//                  random: widget.configuration.random),
-//              AllPage(
-//                  key: PageStorageKey<String>('iOS'),
-//                  type: 'iOS',
-//                  random: widget.configuration.random),
-//              AllPage(
-//                  key: PageStorageKey<String>('休息视频'),
-//                  type: '休息视频',
-//                  random: widget.configuration.random),
-//              AllPage(
-//                  key: PageStorageKey<String>('前端'),
-//                  type: '前端',
-//                  random: widget.configuration.random),
-//              AllPage(
-//                  key: PageStorageKey<String>('拓展资源'),
-//                  type: '拓展资源',
-//                  random: widget.configuration.random),
-//              AllPage(
-//                  key: PageStorageKey<String>('App'),
-//                  type: 'App',
-//                  random: widget.configuration.random),
-//              AllPage(
-//                  key: PageStorageKey<String>('瞎推荐'),
-//                  type: '瞎推荐',
-//                  random: widget.configuration.random),
-//            ]),
             drawer: Drawer(
                 child: ListView(
               children: <Widget>[
