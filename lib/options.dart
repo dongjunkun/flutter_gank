@@ -1,6 +1,6 @@
 import 'package:gank_app/model/app_model.dart';
 
-int pageSize = 30;
+int pageSize = 50;
 bool networkEnable = true;
 
 List<AppModel> getDefaultAppModels() {
