@@ -9,8 +9,12 @@ import 'package:gank_app/options.dart';
 import 'package:gank_app/reorder_and_switch_page.dart';
 import 'package:gank_app/search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_stetho/flutter_stetho.dart';
 
-void main() => runApp(new MyApp());
+void main() {
+  Stetho.initialize();
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override

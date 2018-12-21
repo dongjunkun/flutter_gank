@@ -188,18 +188,18 @@ class _AllPageState extends State<AllPage> {
       list.clear();
     }
 
-    list.addAll(ganHuos.results);
     if (!widget.random && type == 'all') {
-      list.sort((a, b) {
+      ganHuos.results.sort((a, b) {
         if (a.publishedAt == b.publishedAt) {
-          if (b.type == '福利' || b.type == "休息视频") {
-            if (b.type == "福利" && a.type == "休息视频") return -1;
+          if (b.type == '福利' || b.type == '休息视频') {
+            if (b.type == '福利' && a.type == '休息视频') return -1;
             return 1;
           }
         }
         return b.publishedAt.compareTo(a.publishedAt);
       });
     }
+    list.addAll(ganHuos.results);
 
     PageStorage
         .of(context)
