@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gank_app/all_page.dart';
+import 'package:gank_app/pages/all_page.dart';
 
 class SearchPage extends StatefulWidget {
   static const realName = '/search';

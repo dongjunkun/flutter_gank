@@ -4,10 +4,10 @@ import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:gank_app/gank_configuration.dart';
-import 'package:gank_app/home_page.dart';
+import 'package:gank_app/pages/home_page.dart';
 import 'package:gank_app/options.dart';
-import 'package:gank_app/reorder_and_switch_page.dart';
-import 'package:gank_app/search_page.dart';
+import 'package:gank_app/pages/reorder_and_switch_page.dart';
+import 'package:gank_app/pages/search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_stetho/flutter_stetho.dart';
 
