@@ -3,7 +3,7 @@ part 'package:gank_app/model/app_model.g.dart';
 class AppModel extends Object with _AppModelSerializerMiXin{
   String nameCn;
   String nameEn;
-  bool enable;
+  int enable;
 
   AppModel(this.nameCn, this.nameEn, this.enable);
 

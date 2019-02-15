@@ -16,6 +16,10 @@ dependencies:
   connectivity: ^0.3.2
   shared_preferences: ^0.4.3
   flutter_stetho: ^0.2.2
+  sqflite: ^0.13.0+1
+  path: ^1.6.2
+  path_provider: ^0.4.1
+  rxdart: ^0.20.0
 #  flutter_stetho: "^0.1.1"
 #  json_annotation: ^0.2.8
 

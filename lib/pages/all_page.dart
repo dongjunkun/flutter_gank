@@ -172,12 +172,9 @@ class _AllPageState extends State<AllPage> {
     } else {
       url = 'http://gank.io/api/data/$type/$pageSize/$_page';
     }
+    print(url);
     Response response =
-        await dio.get(url, cancelToken: _token).catchError((DioError error) {
-      if (!CancelToken.isCancel(error)) {
-        isError = true;
-      }
-    });
+        await dio.get(url, cancelToken: _token);
 
 //    Map<String, dynamic> map = response.data
     GanHuos ganHuos = GanHuos.fromJson(response.data);

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:gank_app/app.dart';
 import 'package:gank_app/gank_configuration.dart';
 import 'package:gank_app/pages/home_page.dart';
 import 'package:gank_app/options.dart';
@@ -42,9 +43,9 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => HomePage(_configuration, configurationUpdater),
+        '/': (context) => App(_configuration, configurationUpdater),
         '/search': (context) => SearchPage(),
-        '/reorderAndSwitch': (context) => ReorderAndSwitchPage()
+        '/reorderSwitch': (context) => ReorderSwitchPage()
       },
     );
   }
