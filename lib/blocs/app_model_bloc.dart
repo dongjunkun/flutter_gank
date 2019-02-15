@@ -22,7 +22,7 @@ class AppModelBloc implements BlocBase {
   }
 
   save(AppModel item) async {
-    _repository.save('appModel', item);
+    await _repository.save('appModel', item);
     _appModels.add(item);
     _appModelController.add(_appModels);
   }

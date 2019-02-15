@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:gank_app/app.dart';
+import 'package:gank_app/blocs/app_model_bloc.dart';
+import 'package:gank_app/blocs/bloc_provider.dart';
 import 'package:gank_app/gank_configuration.dart';
 import 'package:gank_app/pages/home_page.dart';
 import 'package:gank_app/options.dart';
@@ -14,8 +15,21 @@ import 'package:flutter_stetho/flutter_stetho.dart';
 
 void main() {
   Stetho.initialize();
-  runApp(MyApp());
+  runApp(App());
 }
+
+class App extends StatelessWidget {
+
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocProvider<AppModelBloc>(
+      bloc: AppModelBloc(),
+      child: MyApp(),
+    );
+  }
+}
+
 
 class MyApp extends StatefulWidget {
   @override
@@ -43,9 +57,9 @@ class _MyAppState extends State<MyApp> {
       debugShowCheckedModeBanner: false,
       initialRoute: '/',
       routes: {
-        '/': (context) => App(_configuration, configurationUpdater),
+        '/': (context) => HomePage(_configuration, configurationUpdater),
         '/search': (context) => SearchPage(),
-        '/reorderSwitch': (context) => ReorderSwitchPage()
+        '/reorderAndSwitch': (context) => ReorderAndSwitchPage()
       },
     );
   }

@@ -3,19 +3,8 @@ import 'package:gank_app/blocs/app_model_bloc.dart';
 import 'package:gank_app/blocs/bloc_provider.dart';
 import 'package:gank_app/model/app_model.dart';
 
-class ReorderSwitchPage extends StatelessWidget {
-  static const realName = "/reorderSwitch";
-
-  @override
-  Widget build(BuildContext context) {
-    return BlocProvider<AppModelBloc>(
-      bloc: AppModelBloc(),
-      child: ReorderAndSwitchPage(),
-    );
-  }
-}
-
 class ReorderAndSwitchPage extends StatefulWidget {
+  static const realName = "/reorderAndSwitch";
   @override
   _ReorderAndSwitchPageState createState() => new _ReorderAndSwitchPageState();
 }

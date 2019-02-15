@@ -244,7 +244,7 @@ class _HomePageState extends State<HomePage>
                         title: Text('模块排序及开关'),
                         onTap: () {
                           Navigator.pushNamed(
-                              context, ReorderSwitchPage.realName);
+                              context, ReorderAndSwitchPage.realName);
                         },
                       ),
                     ],
