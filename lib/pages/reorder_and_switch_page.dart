@@ -5,6 +5,7 @@ import 'package:gank_app/model/app_model.dart';
 
 class ReorderAndSwitchPage extends StatefulWidget {
   static const realName = "/reorderAndSwitch";
+
   @override
   _ReorderAndSwitchPageState createState() => new _ReorderAndSwitchPageState();
 }
@@ -55,6 +56,8 @@ class _ReorderAndSwitchPageState extends State<ReorderAndSwitchPage> {
       }
       final AppModel item = allAppModel.removeAt(oldIndex);
       allAppModel.insert(newIndex, item);
+      appModelBloc.delete(item);
+      appModelBloc.insert(item);
     });
   }
 

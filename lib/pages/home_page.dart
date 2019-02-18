@@ -48,15 +48,15 @@ class _HomePageState extends State<HomePage>
   _readAndInit() async {
     final List<AppModel> appModels = await appModelBloc.getAll();
     if (appModels.length < 1) {
-      await appModelBloc.save(AppModel('全部', 'all', 1));
-      await appModelBloc.save(AppModel('妹纸', 'girl', 1));
-      await appModelBloc.save(AppModel('Android', 'Android', 1));
-      await appModelBloc.save(AppModel('iOS', 'iOS', 1));
-      await appModelBloc.save(AppModel('前端', '前端', 1));
-      await appModelBloc.save(AppModel('休息视频', '休息视频', 0));
-      await appModelBloc.save(AppModel('拓展资源', '拓展资源', 0));
-      await appModelBloc.save(AppModel('App', 'App', 1));
-      await appModelBloc.save(AppModel('瞎推荐', '瞎推荐', 0));
+      await appModelBloc.insert(AppModel('全部', 'all', 1));
+      await appModelBloc.insert(AppModel('妹纸', 'girl', 1));
+      await appModelBloc.insert(AppModel('Android', 'Android', 1));
+      await appModelBloc.insert(AppModel('iOS', 'iOS', 1));
+      await appModelBloc.insert(AppModel('前端', '前端', 1));
+      await appModelBloc.insert(AppModel('休息视频', '休息视频', 0));
+      await appModelBloc.insert(AppModel('拓展资源', '拓展资源', 0));
+      await appModelBloc.insert(AppModel('App', 'App', 1));
+      await appModelBloc.insert(AppModel('瞎推荐', '瞎推荐', 0));
     }
   }
 
@@ -113,6 +113,122 @@ class _HomePageState extends State<HomePage>
               allAppModels.forEach((appModel) {
                 if (appModel.enable == 1) appModels.add(appModel);
               });
+              if (appModels.length < 1) {
+                return Scaffold(
+                    key: _globalKey,
+                    appBar: new AppBar(
+                      title: new Text('干货集中营'),
+                      leading: IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _globalKey.currentState.openDrawer();
+                          });
+                        },
+                        icon: Icon(Icons.menu),
+                      ),
+                      actions: <Widget>[
+                        IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(context, SearchPage.realName);
+                          },
+                          icon: Icon(Icons.search),
+                        ),
+                      ],
+                    ),
+                    body: Container(),
+                    drawer: Drawer(
+                        child: ListView(
+                      children: <Widget>[
+                        FlutterLogo(
+                          size: 150.0,
+//                colors: Theme.of(context).primaryColor,
+                          style: FlutterLogoStyle.horizontal,
+                        ),
+                        Divider(),
+                        ListTile(
+                          title: Text('Light'),
+                          trailing: Radio<ThemeType>(
+                            value: ThemeType.light,
+                            groupValue: widget.configuration.themeType,
+                            onChanged: _handleThemeChange,
+                          ),
+                          onTap: () {
+                            _handleThemeChange(ThemeType.light);
+                          },
+                        ),
+                        ListTile(
+                          title: Text('Dark'),
+                          trailing: Radio<ThemeType>(
+                            value: ThemeType.dark,
+                            groupValue: widget.configuration.themeType,
+                            onChanged: _handleThemeChange,
+                          ),
+                          onTap: () {
+                            _handleThemeChange(ThemeType.dark);
+                          },
+                        ),
+                        ListTile(
+                          title: Text('Brown'),
+                          trailing: Radio<ThemeType>(
+                            value: ThemeType.brown,
+                            groupValue: widget.configuration.themeType,
+                            onChanged: _handleThemeChange,
+                          ),
+                          onTap: () {
+                            _handleThemeChange(ThemeType.brown);
+                          },
+                        ),
+                        ListTile(
+                          title: Text('Blue'),
+                          trailing: Radio<ThemeType>(
+                            value: ThemeType.blue,
+                            groupValue: widget.configuration.themeType,
+                            onChanged: _handleThemeChange,
+                          ),
+                          onTap: () {
+                            _handleThemeChange(ThemeType.blue);
+                          },
+                        ),
+                        Divider(),
+                        ListTile(
+                          title: Text('Android'),
+                          trailing: Radio<PlatForm>(
+                            value: PlatForm.android,
+                            groupValue: widget.configuration.platForm,
+                            onChanged: _handlePlatformChange,
+                          ),
+                          onTap: () {
+                            _handlePlatformChange(PlatForm.android);
+                          },
+                        ),
+                        ListTile(
+                          title: Text('iOS'),
+                          trailing: Radio<PlatForm>(
+                            value: PlatForm.iOS,
+                            groupValue: widget.configuration.platForm,
+                            onChanged: _handlePlatformChange,
+                          ),
+                          onTap: () {
+                            _handlePlatformChange(PlatForm.iOS);
+                          },
+                        ),
+                        Divider(),
+                        CheckboxListTile(
+                            title: Text('随机模式'),
+                            value: widget.configuration.random,
+                            onChanged: (bool value) {
+                              _handleRandomChange(value);
+                            }),
+                        ListTile(
+                          title: Text('模块排序及开关'),
+                          onTap: () {
+                            Navigator.pushNamed(
+                                context, ReorderAndSwitchPage.realName);
+                          },
+                        ),
+                      ],
+                    )));
+              }
               return new Scaffold(
                   key: _globalKey,
                   appBar: new AppBar(

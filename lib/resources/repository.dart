@@ -5,8 +5,8 @@ import 'package:gank_app/resources/gank_db.dart';
 class Repository{
   final db = GankDB();
 
-  Future<int> save(String table,dynamic item) async{
-    return db.save(table, item);
+  Future<int> insert(String table,dynamic item) async{
+    return db.insert(table, item);
   }
 
   Future<List> getALl(String table) async{
@@ -16,4 +16,9 @@ class Repository{
   Future<int> update(String table, dynamic item) async{
     return db.update(table, item);
   }
+
+  Future<int> delete(String table, dynamic item) async {
+    return db.delete(table, item);
+  }
+
 }

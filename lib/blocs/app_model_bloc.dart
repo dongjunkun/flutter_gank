@@ -21,8 +21,8 @@ class AppModelBloc implements BlocBase {
     return _appModels;
   }
 
-  save(AppModel item) async {
-    await _repository.save('appModel', item);
+  insert(AppModel item) async {
+    await _repository.insert('appModel', item);
     _appModels.add(item);
     _appModelController.add(_appModels);
   }
@@ -32,6 +32,12 @@ class AppModelBloc implements BlocBase {
         _appModels.indexWhere((appModel) => appModel.nameEn == item.nameEn);
     _appModels[index] = item;
     await _repository.update("appModel", item);
+    _appModelController.add(_appModels);
+  }
+
+  delete(AppModel item) async {
+    await _repository.delete('appModel', item);
+    _appModels.remove(item);
     _appModelController.add(_appModels);
   }
 

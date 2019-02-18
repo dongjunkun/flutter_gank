@@ -43,7 +43,7 @@ class GankDB {
     return ourDB;
   }
 
-  Future<int> save(String table, dynamic item) async {
+  Future<int> insert(String table, dynamic item) async {
     var dbClient = await db;
     int res = await dbClient.insert(table, item.toJson());
     return res;
@@ -68,7 +68,12 @@ class GankDB {
     return await dbClient.update(table, item.toJson(),
         where: "nameEn =?", whereArgs:[item.nameEn]);
   }
+  Future<int> delete(String table, dynamic item) async{
+    var dbClient = await db;
+    var res = await dbClient.delete(table,where: "index=?",whereArgs: [item.index]);
+    return res;
 
+  }
   Future close() async {
     var dbClient = await db;
     return dbClient.close();
