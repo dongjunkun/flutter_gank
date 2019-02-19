@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 import 'package:gank_app/blocs/app_model_bloc.dart';
 import 'package:gank_app/blocs/bloc_provider.dart';
 import 'package:gank_app/gank_configuration.dart';
@@ -48,15 +49,15 @@ class _HomePageState extends State<HomePage>
   _readAndInit() async {
     final List<AppModel> appModels = await appModelBloc.getAll();
     if (appModels.length < 1) {
-      await appModelBloc.insert(AppModel(0,'全部', 'all', 1));
-      await appModelBloc.insert(AppModel(1,'妹纸', 'girl', 1));
-      await appModelBloc.insert(AppModel(2,'Android', 'Android', 1));
-      await appModelBloc.insert(AppModel(3,'iOS', 'iOS', 1));
-      await appModelBloc.insert(AppModel(4,'前端', '前端', 1));
-      await appModelBloc.insert(AppModel(5,'休息视频', '休息视频', 0));
-      await appModelBloc.insert(AppModel(6,'拓展资源', '拓展资源', 0));
-      await appModelBloc.insert(AppModel(7,'App', 'App', 1));
-      await appModelBloc.insert(AppModel(8,'瞎推荐', '瞎推荐', 0));
+      await appModelBloc.insert(AppModel(0, '全部', 'all', 1));
+      await appModelBloc.insert(AppModel(1, '妹纸', 'girl', 1));
+      await appModelBloc.insert(AppModel(2, 'Android', 'Android', 1));
+      await appModelBloc.insert(AppModel(3, 'iOS', 'iOS', 1));
+      await appModelBloc.insert(AppModel(4, '前端', '前端', 1));
+      await appModelBloc.insert(AppModel(5, '休息视频', '休息视频', 0));
+      await appModelBloc.insert(AppModel(6, '拓展资源', '拓展资源', 0));
+      await appModelBloc.insert(AppModel(7, 'App', 'App', 1));
+      await appModelBloc.insert(AppModel(8, '瞎推荐', '瞎推荐', 0));
     }
   }
 
@@ -98,6 +99,14 @@ class _HomePageState extends State<HomePage>
     }
   }
 
+  Future<Null> _handleGifEnableChange(bool value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    if (widget.updater != null) {
+      prefs.setBool('gifEnable', value);
+      widget.updater(widget.configuration.copyWith(gifEnable: value));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark.copyWith(
@@ -119,118 +128,9 @@ class _HomePageState extends State<HomePage>
               if (appModels.length < 1) {
                 return Scaffold(
                     key: _globalKey,
-                    appBar: new AppBar(
-                      title: new Text('干货集中营'),
-                      leading: IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _globalKey.currentState.openDrawer();
-                          });
-                        },
-                        icon: Icon(Icons.menu),
-                      ),
-                      actions: <Widget>[
-                        IconButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, SearchPage.realName);
-                          },
-                          icon: Icon(Icons.search),
-                        ),
-                      ],
-                    ),
+                    appBar: buildAppBar(context),
                     body: Container(),
-                    drawer: Drawer(
-                        child: ListView(
-                      children: <Widget>[
-                        FlutterLogo(
-                          size: 150.0,
-//                colors: Theme.of(context).primaryColor,
-                          style: FlutterLogoStyle.horizontal,
-                        ),
-                        Divider(),
-                        ListTile(
-                          title: Text('Light'),
-                          trailing: Radio<ThemeType>(
-                            value: ThemeType.light,
-                            groupValue: widget.configuration.themeType,
-                            onChanged: _handleThemeChange,
-                          ),
-                          onTap: () {
-                            _handleThemeChange(ThemeType.light);
-                          },
-                        ),
-                        ListTile(
-                          title: Text('Dark'),
-                          trailing: Radio<ThemeType>(
-                            value: ThemeType.dark,
-                            groupValue: widget.configuration.themeType,
-                            onChanged: _handleThemeChange,
-                          ),
-                          onTap: () {
-                            _handleThemeChange(ThemeType.dark);
-                          },
-                        ),
-                        ListTile(
-                          title: Text('Brown'),
-                          trailing: Radio<ThemeType>(
-                            value: ThemeType.brown,
-                            groupValue: widget.configuration.themeType,
-                            onChanged: _handleThemeChange,
-                          ),
-                          onTap: () {
-                            _handleThemeChange(ThemeType.brown);
-                          },
-                        ),
-                        ListTile(
-                          title: Text('Blue'),
-                          trailing: Radio<ThemeType>(
-                            value: ThemeType.blue,
-                            groupValue: widget.configuration.themeType,
-                            onChanged: _handleThemeChange,
-                          ),
-                          onTap: () {
-                            _handleThemeChange(ThemeType.blue);
-                          },
-                        ),
-                        Divider(),
-                        ListTile(
-                          title: Text('Android'),
-                          trailing: Radio<PlatForm>(
-                            value: PlatForm.android,
-                            groupValue: widget.configuration.platForm,
-                            onChanged: _handlePlatformChange,
-                          ),
-                          onTap: () {
-                            _handlePlatformChange(PlatForm.android);
-                          },
-                        ),
-                        ListTile(
-                          title: Text('iOS'),
-                          trailing: Radio<PlatForm>(
-                            value: PlatForm.iOS,
-                            groupValue: widget.configuration.platForm,
-                            onChanged: _handlePlatformChange,
-                          ),
-                          onTap: () {
-                            _handlePlatformChange(PlatForm.iOS);
-                          },
-                        ),
-                        Divider(),
-                        CheckboxListTile(
-                            title: Text('随机模式'),
-                            value: widget.configuration.random,
-                            onChanged: (bool value) {
-                              _handleRandomChange(value);
-                            }),
-                        ListTile(
-                          title: Text('模块排序及开关'),
-                          onTap: () {
-                            Navigator.pushNamed(
-                                context, ReorderAndSwitchPage.realName);
-                          },
-                        ),
-                      ],
-                    )));
+                    drawer: buildDrawer(context));
               }
               return new Scaffold(
                   key: _globalKey,
@@ -273,101 +173,11 @@ class _HomePageState extends State<HomePage>
                           return AllPage(
                               key: PageStorageKey<String>(appModel.nameEn),
                               type: appModel.nameEn,
+                              enableGif: widget.configuration.gifEnable,
                               random: widget.configuration.random);
                         }
                       }).toList()),
-                  drawer: Drawer(
-                      child: ListView(
-                    children: <Widget>[
-                      FlutterLogo(
-                        size: 150.0,
-//                colors: Theme.of(context).primaryColor,
-                        style: FlutterLogoStyle.horizontal,
-                      ),
-                      Divider(),
-                      ListTile(
-                        title: Text('Light'),
-                        trailing: Radio<ThemeType>(
-                          value: ThemeType.light,
-                          groupValue: widget.configuration.themeType,
-                          onChanged: _handleThemeChange,
-                        ),
-                        onTap: () {
-                          _handleThemeChange(ThemeType.light);
-                        },
-                      ),
-                      ListTile(
-                        title: Text('Dark'),
-                        trailing: Radio<ThemeType>(
-                          value: ThemeType.dark,
-                          groupValue: widget.configuration.themeType,
-                          onChanged: _handleThemeChange,
-                        ),
-                        onTap: () {
-                          _handleThemeChange(ThemeType.dark);
-                        },
-                      ),
-                      ListTile(
-                        title: Text('Brown'),
-                        trailing: Radio<ThemeType>(
-                          value: ThemeType.brown,
-                          groupValue: widget.configuration.themeType,
-                          onChanged: _handleThemeChange,
-                        ),
-                        onTap: () {
-                          _handleThemeChange(ThemeType.brown);
-                        },
-                      ),
-                      ListTile(
-                        title: Text('Blue'),
-                        trailing: Radio<ThemeType>(
-                          value: ThemeType.blue,
-                          groupValue: widget.configuration.themeType,
-                          onChanged: _handleThemeChange,
-                        ),
-                        onTap: () {
-                          _handleThemeChange(ThemeType.blue);
-                        },
-                      ),
-                      Divider(),
-                      ListTile(
-                        title: Text('Android'),
-                        trailing: Radio<PlatForm>(
-                          value: PlatForm.android,
-                          groupValue: widget.configuration.platForm,
-                          onChanged: _handlePlatformChange,
-                        ),
-                        onTap: () {
-                          _handlePlatformChange(PlatForm.android);
-                        },
-                      ),
-                      ListTile(
-                        title: Text('iOS'),
-                        trailing: Radio<PlatForm>(
-                          value: PlatForm.iOS,
-                          groupValue: widget.configuration.platForm,
-                          onChanged: _handlePlatformChange,
-                        ),
-                        onTap: () {
-                          _handlePlatformChange(PlatForm.iOS);
-                        },
-                      ),
-                      Divider(),
-                      CheckboxListTile(
-                          title: Text('随机模式'),
-                          value: widget.configuration.random,
-                          onChanged: (bool value) {
-                            _handleRandomChange(value);
-                          }),
-                      ListTile(
-                        title: Text('模块排序及开关'),
-                        onTap: () {
-                          Navigator.pushNamed(
-                              context, ReorderAndSwitchPage.realName);
-                        },
-                      ),
-                    ],
-                  )));
+                  drawer: buildDrawer(context));
             } else {
               return Scaffold();
             }
@@ -389,5 +199,155 @@ class _HomePageState extends State<HomePage>
           }
           return null;
         });
+  }
+
+  Drawer buildDrawer(BuildContext context) {
+    Color currentColor = Color(0xff443a49);
+
+    ValueChanged<Color> onColorChanged;
+
+    changeColor(Color color) => setState(() => currentColor = color);
+    return Drawer(
+        child: ListView(
+      children: <Widget>[
+        FlutterLogo(
+          size: 100.0,
+//                colors: Theme.of(context).primaryColor,
+          style: FlutterLogoStyle.horizontal,
+        ),
+        Divider(),
+        ListTile(
+          title: Text('Light'),
+          trailing: Radio<ThemeType>(
+            value: ThemeType.light,
+            groupValue: widget.configuration.themeType,
+            onChanged: _handleThemeChange,
+          ),
+          onTap: () {
+            _handleThemeChange(ThemeType.light);
+          },
+        ),
+        ListTile(
+          title: Text('Dark'),
+          trailing: Radio<ThemeType>(
+            value: ThemeType.dark,
+            groupValue: widget.configuration.themeType,
+            onChanged: _handleThemeChange,
+          ),
+          onTap: () {
+            _handleThemeChange(ThemeType.dark);
+          },
+        ),
+        ListTile(
+          title: Text('Brown'),
+          trailing: Radio<ThemeType>(
+            value: ThemeType.brown,
+            groupValue: widget.configuration.themeType,
+            onChanged: _handleThemeChange,
+          ),
+          onTap: () {
+            _handleThemeChange(ThemeType.brown);
+          },
+        ),
+        ListTile(
+          title: Text('Blue'),
+          trailing: Radio<ThemeType>(
+            value: ThemeType.blue,
+            groupValue: widget.configuration.themeType,
+            onChanged: _handleThemeChange,
+          ),
+          onTap: () {
+            _handleThemeChange(ThemeType.blue);
+          },
+        ),
+        Divider(),
+        ListTile(
+          title: Text('Android'),
+          trailing: Radio<PlatForm>(
+            value: PlatForm.android,
+            groupValue: widget.configuration.platForm,
+            onChanged: _handlePlatformChange,
+          ),
+          onTap: () {
+            _handlePlatformChange(PlatForm.android);
+          },
+        ),
+        ListTile(
+          title: Text('iOS'),
+          trailing: Radio<PlatForm>(
+            value: PlatForm.iOS,
+            groupValue: widget.configuration.platForm,
+            onChanged: _handlePlatformChange,
+          ),
+          onTap: () {
+            _handlePlatformChange(PlatForm.iOS);
+          },
+        ),
+        Divider(),
+        CheckboxListTile(
+            title: Text('随机模式'),
+            value: widget.configuration.random,
+            onChanged: (bool value) {
+              _handleRandomChange(value);
+            }),
+        CheckboxListTile(
+            title: Text('开启gif'),
+            value: widget.configuration.gifEnable,
+            onChanged: (bool value) {
+              _handleGifEnableChange(value);
+            }),
+        ListTile(
+          title: Text('模块排序及开关'),
+          onTap: () {
+            Navigator.pushNamed(context, ReorderAndSwitchPage.realName);
+          },
+        ),
+        ListTile(
+          title: Text('自定义主题'),
+          onTap: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  titlePadding: const EdgeInsets.all(0.0),
+                  contentPadding: const EdgeInsets.all(0.0),
+                  content: SingleChildScrollView(
+                    child: ColorPicker(
+                      pickerColor: currentColor,
+                      onColorChanged: changeColor,
+                      colorPickerWidth: 1000.0,
+                      pickerAreaHeightPercent: 0.7,
+                      enableAlpha: true,
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        )
+      ],
+    ));
+  }
+
+  AppBar buildAppBar(BuildContext context) {
+    return new AppBar(
+      title: new Text('干货集中营'),
+      leading: IconButton(
+        onPressed: () {
+          setState(() {
+            _globalKey.currentState.openDrawer();
+          });
+        },
+        icon: Icon(Icons.menu),
+      ),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () {
+            Navigator.pushNamed(context, SearchPage.realName);
+          },
+          icon: Icon(Icons.search),
+        ),
+      ],
+    );
   }
 }

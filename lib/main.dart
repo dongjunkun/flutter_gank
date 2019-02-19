@@ -3,15 +3,15 @@ import 'dart:async';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_stetho/flutter_stetho.dart';
 import 'package:gank_app/blocs/app_model_bloc.dart';
 import 'package:gank_app/blocs/bloc_provider.dart';
 import 'package:gank_app/gank_configuration.dart';
-import 'package:gank_app/pages/home_page.dart';
 import 'package:gank_app/options.dart';
+import 'package:gank_app/pages/home_page.dart';
 import 'package:gank_app/pages/reorder_and_switch_page.dart';
 import 'package:gank_app/pages/search_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_stetho/flutter_stetho.dart';
 
 void main() {
   Stetho.initialize();
@@ -19,8 +19,6 @@ void main() {
 }
 
 class App extends StatelessWidget {
-
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider<AppModelBloc>(
@@ -30,7 +28,6 @@ class App extends StatelessWidget {
   }
 }
 
-
 class MyApp extends StatefulWidget {
   @override
   _MyAppState createState() => new _MyAppState();
@@ -38,7 +35,10 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   GankConfiguration _configuration = GankConfiguration(
-      platForm: PlatForm.android, themeType: ThemeType.light, random: false);
+      platForm: PlatForm.android,
+      themeType: ThemeType.light,
+      random: false,
+      gifEnable: false);
 
   StreamSubscription<ConnectivityResult> _streamSubscription;
 
@@ -50,7 +50,6 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
     return MaterialApp(
       title: '干货集中营',
       theme: theme,
@@ -94,8 +93,12 @@ class _MyAppState extends State<MyApp> {
         PlatForm.values.elementAt(prefs.getInt('platform') ?? 0);
 
     bool random = prefs.getBool('random' ?? false);
+    bool gifEnable = prefs.getBool('gifEnable' ?? false);
     configurationUpdater(_configuration.copyWith(
-        themeType: themeType, platForm: platForm, random: random));
+        themeType: themeType,
+        platForm: platForm,
+        random: random,
+        gifEnable: gifEnable));
   }
 
   TargetPlatform get platform {

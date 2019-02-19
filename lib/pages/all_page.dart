@@ -1,20 +1,24 @@
 import 'dart:async';
 
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:gank_app/ui/common_view/error_view.dart';
-import 'package:gank_app/ui/common_view/no_network_view.dart';
 import 'package:gank_app/model/ganhuo.dart';
 import 'package:gank_app/options.dart';
+import 'package:gank_app/ui/common_view/error_view.dart';
+import 'package:gank_app/ui/common_view/no_network_view.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class AllPage extends StatefulWidget {
   final String type;
   bool random = false;
+  bool enableGif = false;
 
-  AllPage({Key key, @required this.type, @required this.random})
+  AllPage(
+      {Key key,
+      @required this.type,
+      @required this.random,
+      @required this.enableGif})
       : super(key: key);
 
   @override
@@ -28,7 +32,7 @@ class _AllPageState extends State<AllPage> {
 
   String _pageIdentifier;
   String _dataIdentifier;
-  String _scrollDistanceIdentifier ;
+  String _scrollDistanceIdentifier;
 
   int _page;
 
@@ -48,12 +52,13 @@ class _AllPageState extends State<AllPage> {
     _pageIdentifier = '${widget.type}_pageIdentifier';
     _dataIdentifier = '${widget.type}_dataIdentifier';
     _scrollDistanceIdentifier = '${widget.type}_scrollDistanceIndentifier';
-    scrollDistance = PageStorage.of(context).readState(context,identifier: _scrollDistanceIdentifier)??0.0;
+    scrollDistance = PageStorage.of(context)
+            .readState(context, identifier: _scrollDistanceIdentifier) ??
+        0.0;
 
     _page =
         PageStorage.of(context).readState(context, identifier: _pageIdentifier);
-    list.addAll(PageStorage
-            .of(context)
+    list.addAll(PageStorage.of(context)
             .readState(context, identifier: _dataIdentifier) ??
         []);
   }
@@ -82,7 +87,8 @@ class _AllPageState extends State<AllPage> {
       getData(false, widget.type);
     }
     scrollDistance = _scrollController.position.pixels;
-    PageStorage.of(context).writeState(context, scrollDistance,identifier: _scrollDistanceIdentifier);
+    PageStorage.of(context).writeState(context, scrollDistance,
+        identifier: _scrollDistanceIdentifier);
     setState(() {});
   }
 
@@ -92,9 +98,7 @@ class _AllPageState extends State<AllPage> {
       return FloatingActionButton(
         onPressed: () {
           _scrollController.animateTo(0.0,
-              duration: Duration(
-                  milliseconds: 300),
-              curve: Curves.easeOut);
+              duration: Duration(milliseconds: 300), curve: Curves.easeOut);
         },
         tooltip: 'top',
         child: new Icon(Icons.arrow_upward),
@@ -130,7 +134,11 @@ class _AllPageState extends State<AllPage> {
             if (list.elementAt(index).type == '福利') {
               return _buildImageItem(list.elementAt(index).url);
             } else {
-              return _buildTextItem(list.elementAt(index));
+              if (widget.enableGif) {
+                return _buildTextAndImageItem(list.elementAt(index));
+              } else {
+                return _buildTextItem(list.elementAt(index));
+              }
             }
           });
     }
@@ -138,15 +146,15 @@ class _AllPageState extends State<AllPage> {
 
   @override
   Widget build(BuildContext context) {
-      return new Scaffold(
-        key: _globalKey,
-        body: RefreshIndicator(
-          key: _refreshIndicatorKey,
-          child: _buildRefreshContent(),
-          onRefresh: _handleRefresh,
-        ),
-        floatingActionButton: _buildFloatActionButton(),
-      );
+    return new Scaffold(
+      key: _globalKey,
+      body: RefreshIndicator(
+        key: _refreshIndicatorKey,
+        child: _buildRefreshContent(),
+        onRefresh: _handleRefresh,
+      ),
+      floatingActionButton: _buildFloatActionButton(),
+    );
   }
 
   Future<Null> launcherUrl(String url) async {
@@ -173,8 +181,7 @@ class _AllPageState extends State<AllPage> {
       url = 'http://gank.io/api/data/$type/$pageSize/$_page';
     }
     print(url);
-    Response response =
-        await dio.get(url, cancelToken: _token);
+    Response response = await dio.get(url, cancelToken: _token);
 
 //    Map<String, dynamic> map = response.data
     GanHuos ganHuos = GanHuos.fromJson(response.data);
@@ -198,26 +205,24 @@ class _AllPageState extends State<AllPage> {
     }
     list.addAll(ganHuos.results);
 
-    PageStorage
-        .of(context)
+    PageStorage.of(context)
         .writeState(context, list, identifier: _dataIdentifier);
-    PageStorage
-        .of(context)
+    PageStorage.of(context)
         .writeState(context, _page, identifier: _pageIdentifier);
 
     setState(() {});
   }
 
-  Widget _buildTextItem(GanHuo ganHuo) {
+  Widget _buildTextAndImageItem(GanHuo ganHuo) {
     List<dynamic> urls = ganHuo.images;
 
-   /* if (urls != null && urls.length > 0) {
+    if (urls != null && urls.length > 0) {
       return new Column(
         children: <Widget>[
           new InkWell(
             onTap: () {
-              _globalKey.currentState.showSnackBar(
-                  SnackBar(content: Text(ganHuo.desc)));
+              _globalKey.currentState
+                  .showSnackBar(SnackBar(content: Text(ganHuo.desc)));
             },
             child: new ListTile(
               title: Text(
@@ -233,29 +238,25 @@ class _AllPageState extends State<AllPage> {
               scrollDirection: Axis.horizontal,
               itemCount: urls.length,
               shrinkWrap: true,
-              padding: const EdgeInsets.only(left: 8.0,right: 8.0),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0),
               itemBuilder: (context, index) {
-               return _buildWrapImageItem(urls.elementAt(index));
-//                new Container(
-//                    color: Colors.red,
-//                    child: new Text('aaaaaaaaaaaaaaaa'));
+                return _buildWrapImageItem(urls.elementAt(index));
               },
             ),
           ),
         ],
       );
-    } else {*/
+    } else {
+      return _buildTextItem(ganHuo);
+    }
+  }
+
+  Widget _buildTextItem(GanHuo ganHuo) {
     return new InkWell(
       onTap: () {
-//        _globalKey.currentState
-//            .showSnackBar(SnackBar(content: Text(ganHuo['desc'])));
         launcherUrl(ganHuo.url);
       },
       child: new ListTile(
-//        leading: Icon(Icons.android,
-//          size: 16.0,
-//
-//        ),
         title: Text(
           ganHuo.desc,
           textAlign: TextAlign.start,
@@ -263,7 +264,6 @@ class _AllPageState extends State<AllPage> {
         ),
       ),
     );
-//    }
   }
 
   Widget _buildImageItem(String url) {
@@ -293,7 +293,7 @@ class _AllPageState extends State<AllPage> {
 
   Widget _buildWrapImageItem(String url) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 0.0,horizontal: 5.0),
+      padding: const EdgeInsets.symmetric(vertical: 0.0, horizontal: 5.0),
       child: new GestureDetector(
         onTap: () {
           Navigator.push(
@@ -334,7 +334,7 @@ class ImagePreViewWidget extends StatelessWidget {
                   Navigator.pop(context);
                 },
                 child: Hero(
-                    tag: url,
+                  tag: url,
 //                    child: Image(
 //                      image: AdvancedNetworkImage(url),
 //                    )
