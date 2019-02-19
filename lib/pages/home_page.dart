@@ -48,15 +48,15 @@ class _HomePageState extends State<HomePage>
   _readAndInit() async {
     final List<AppModel> appModels = await appModelBloc.getAll();
     if (appModels.length < 1) {
-      await appModelBloc.insert(AppModel('全部', 'all', 1));
-      await appModelBloc.insert(AppModel('妹纸', 'girl', 1));
-      await appModelBloc.insert(AppModel('Android', 'Android', 1));
-      await appModelBloc.insert(AppModel('iOS', 'iOS', 1));
-      await appModelBloc.insert(AppModel('前端', '前端', 1));
-      await appModelBloc.insert(AppModel('休息视频', '休息视频', 0));
-      await appModelBloc.insert(AppModel('拓展资源', '拓展资源', 0));
-      await appModelBloc.insert(AppModel('App', 'App', 1));
-      await appModelBloc.insert(AppModel('瞎推荐', '瞎推荐', 0));
+      await appModelBloc.insert(AppModel(0,'全部', 'all', 1));
+      await appModelBloc.insert(AppModel(1,'妹纸', 'girl', 1));
+      await appModelBloc.insert(AppModel(2,'Android', 'Android', 1));
+      await appModelBloc.insert(AppModel(3,'iOS', 'iOS', 1));
+      await appModelBloc.insert(AppModel(4,'前端', '前端', 1));
+      await appModelBloc.insert(AppModel(5,'休息视频', '休息视频', 0));
+      await appModelBloc.insert(AppModel(6,'拓展资源', '拓展资源', 0));
+      await appModelBloc.insert(AppModel(7,'App', 'App', 1));
+      await appModelBloc.insert(AppModel(8,'瞎推荐', '瞎推荐', 0));
     }
   }
 
@@ -112,6 +112,9 @@ class _HomePageState extends State<HomePage>
               final List<AppModel> allAppModels = snapshot.data;
               allAppModels.forEach((appModel) {
                 if (appModel.enable == 1) appModels.add(appModel);
+              });
+              appModels.sort((a, b) {
+                return a.modelIndex.compareTo(b.modelIndex);
               });
               if (appModels.length < 1) {
                 return Scaffold(

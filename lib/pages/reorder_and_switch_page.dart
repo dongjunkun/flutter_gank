@@ -23,8 +23,7 @@ class _ReorderAndSwitchPageState extends State<ReorderAndSwitchPage> {
   }
 
   _read() async {
-    final List<AppModel> appModels = await appModelBloc.getAll();
-    print(appModels.length);
+    allAppModel = await appModelBloc.getAll();
   }
 
   @override
@@ -38,6 +37,9 @@ class _ReorderAndSwitchPageState extends State<ReorderAndSwitchPage> {
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
             final List<AppModel> allAppModel = snapshot.data;
+            allAppModel.sort((a, b) {
+              return a.modelIndex.compareTo(b.modelIndex);
+            });
             return ReorderableListView(
                 children: allAppModel.map(buildListTile).toList(),
                 onReorder: _onReorder);
@@ -56,8 +58,16 @@ class _ReorderAndSwitchPageState extends State<ReorderAndSwitchPage> {
       }
       final AppModel item = allAppModel.removeAt(oldIndex);
       allAppModel.insert(newIndex, item);
-      appModelBloc.delete(item);
-      appModelBloc.insert(item);
+
+      for (int i = 0; i < allAppModel.length; i++) {
+        AppModel appModel = allAppModel[i];
+        if (appModel.modelIndex != i) {
+          appModel.modelIndex = i;
+          appModelBloc.update(appModel);
+        }
+      }
+      /* appModelBloc.delete(item);
+      appModelBloc.insert(item);*/
     });
   }
 

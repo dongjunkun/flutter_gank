@@ -29,7 +29,7 @@ class AppModelBloc implements BlocBase {
 
   update(AppModel item) async {
     final index =
-        _appModels.indexWhere((appModel) => appModel.nameEn == item.nameEn);
+        _appModels.indexWhere((appModel) => appModel.modelIndex == item.modelIndex);
     _appModels[index] = item;
     await _repository.update("appModel", item);
     _appModelController.add(_appModels);

@@ -24,6 +24,7 @@ class GankDB {
   final String nameCn = "nameCn";
   final String nameEn = "nameEn";
   final String enable = "enable";
+  final String modelIndex = "modelIndex";
 
   Future<Database> init() async {
     Directory directory = await getApplicationDocumentsDirectory();
@@ -33,7 +34,8 @@ class GankDB {
     var ourDB = await openDatabase(path, version: 1,
         onCreate: (Database newDB, int version) {
       newDB.execute("""
-      CREATE TABLE $appMode(
+      CREATE TABLE $appMode (
+        $modelIndex INTEGER PRIMARY KEY NOT NULL,
         $nameCn TEXT NOT NULL,
         $nameEn TEXT NOT NULL,
         $enable INTEGER NOT NULL
@@ -66,11 +68,11 @@ class GankDB {
   Future<int> update(String table, dynamic item) async {
     var dbClient = await db;
     return await dbClient.update(table, item.toJson(),
-        where: "nameEn =?", whereArgs:[item.nameEn]);
+        where: "modelIndex =?", whereArgs:[item.modelIndex]);
   }
   Future<int> delete(String table, dynamic item) async{
     var dbClient = await db;
-    var res = await dbClient.delete(table,where: "index=?",whereArgs: [item.index]);
+    var res = await dbClient.delete(table,where: "modelIndex=?",whereArgs: [item.modelIndex]);
     return res;
 
   }
