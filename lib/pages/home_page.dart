@@ -26,7 +26,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   GlobalKey<ScaffoldState> _globalKey = GlobalKey();
 
   TabController tabController;
@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage>
     appModelBloc = BlocProvider.of<AppModelBloc>(context);
 
     _readAndInit();
-    tabController = TabController(initialIndex: 0, length: 9, vsync: this);
   }
 
   _readAndInit() async {
@@ -132,6 +131,7 @@ class _HomePageState extends State<HomePage>
                     body: Container(),
                     drawer: buildDrawer(context));
               }
+              tabController = TabController(initialIndex: 0, length: appModels.length, vsync: this);
               return new Scaffold(
                   key: _globalKey,
                   appBar: new AppBar(
@@ -202,11 +202,14 @@ class _HomePageState extends State<HomePage>
   }
 
   Drawer buildDrawer(BuildContext context) {
+    // create some values
+    Color pickerColor = Color(0xff443a49);
     Color currentColor = Color(0xff443a49);
 
-    ValueChanged<Color> onColorChanged;
-
-    changeColor(Color color) => setState(() => currentColor = color);
+// ValueChanged<Color> callback
+    void changeColor(Color color) {
+      setState(() => pickerColor = color);
+    }
     return Drawer(
         child: ListView(
       children: <Widget>[
@@ -309,17 +312,36 @@ class _HomePageState extends State<HomePage>
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
-                  titlePadding: const EdgeInsets.all(0.0),
-                  contentPadding: const EdgeInsets.all(0.0),
+                  title: const Text('Pick a color!'),
                   content: SingleChildScrollView(
                     child: ColorPicker(
-                      pickerColor: currentColor,
-                      onColorChanged: changeColor,
-                      colorPickerWidth: 1000.0,
-                      pickerAreaHeightPercent: 0.7,
-                      enableAlpha: true,
+                      currentColor,
+                      changeColor,
                     ),
+                    // Use Material color picker:
+                    //
+                    // child: MaterialPicker(
+                    //   pickerColor: pickerColor,
+                    //   onColorChanged: changeColor,
+                    //   enableLabel: true, // only on portrait mode
+                    // ),
+                    //
+                    // Use Block color picker:
+                    //
+                    // child: BlockPicker(
+                    //   pickerColor: currentColor,
+                    //   onColorChanged: changeColor,
+                    // ),
                   ),
+                  actions: <Widget>[
+                    FlatButton(
+                      child: const Text('Got it'),
+                      onPressed: () {
+                        setState(() => currentColor = pickerColor);
+                        Navigator.of(context).pop();
+                      },
+                    ),
+                  ],
                 );
               },
             );
